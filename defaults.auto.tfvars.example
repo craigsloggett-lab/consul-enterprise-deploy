@@ -1,5 +1,6 @@
-project_name      = "consul"
+project_name      = "lab"
 route53_zone_name = "example.com"
+vpc_name          = "hashistack"
 consul_license    = "your-consul-enterprise-license-here"
 
 ec2_key_pair_name = "my-key-pair"

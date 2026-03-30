@@ -18,6 +18,11 @@ output "consul_target_group_arn" {
   value       = module.consul.consul_target_group_arn
 }
 
+output "ec2_ami_name" {
+  description = "Name of the AMI used for EC2 instances."
+  value       = module.consul.ec2_ami_name
+}
+
 output "consul_ca_cert" {
   description = "CA certificate for trusting the Consul TLS chain."
   value       = module.consul.consul_ca_cert
