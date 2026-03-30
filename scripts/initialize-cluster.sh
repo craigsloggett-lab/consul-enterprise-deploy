@@ -12,7 +12,6 @@ read_terraform_outputs() {
   repo_root="$(cd "$(dirname "$0")/.." && pwd)"
   bastion_ip=$(cd "${repo_root}" && terraform output -raw bastion_public_ip)
   consul_ips=$(cd "${repo_root}" && terraform output -json consul_private_ips | jq -r '.[]')
-  consul_ca_cert=$(cd "${repo_root}" && terraform output -raw consul_ca_cert)
   ami_name=$(cd "${repo_root}" && terraform output -raw ec2_ami_name)
 
   first_consul_ip=$(printf '%s\n' "${consul_ips}" | head -1)
@@ -31,24 +30,11 @@ read_terraform_outputs() {
   log "  SSH user:" "${ssh_user}"
 }
 
-setup_tunnel() {
-  log "Opening SSH tunnel to ${first_consul_ip}:8501."
-
-  ca_cert_file=$(mktemp)
-  ssh_socket=$(mktemp -u)
-  printf '%s\n' "${consul_ca_cert}" >"${ca_cert_file}"
-
+remote_exec() {
+  target_ip="${1:?target IP required}"
+  shift
   # shellcheck disable=SC2086
-  ssh ${ssh_opts} -f -N -M -S "${ssh_socket}" \
-    -L 8501:"${first_consul_ip}":8501 "${ssh_user}@${bastion_ip}"
-
-  export CONSUL_HTTP_ADDR="https://127.0.0.1:8501"
-  export CONSUL_CACERT="${ca_cert_file}"
-}
-
-cleanup() {
-  rm -f "${ca_cert_file}"
-  ssh -S "${ssh_socket}" -O exit x 2>/dev/null
+  ssh ${ssh_opts} -J "${ssh_user}@${bastion_ip}" "${ssh_user}@${target_ip}" "$@"
 }
 
 wait_for_consul() {
@@ -56,8 +42,8 @@ wait_for_consul() {
 
   attempts=0
   max_attempts=30
-  while ! curl -sf --cacert "${ca_cert_file}" \
-    "${CONSUL_HTTP_ADDR}/v1/status/leader" >/dev/null 2>&1; do
+  while ! remote_exec "${first_consul_ip}" \
+    "curl -sf --cacert /opt/consul/tls/ca.crt --cert /opt/consul/tls/server.crt --key /opt/consul/tls/server.key https://127.0.0.1:8501/v1/status/leader" >/dev/null 2>&1; do
     attempts=$((attempts + 1))
     if [ "${attempts}" -ge "${max_attempts}" ]; then
       log "ERROR: Consul not reachable after ${max_attempts} attempts."
@@ -80,7 +66,9 @@ bootstrap_acl() {
 
   log "Bootstrapping Consul ACL system."
 
-  if consul acl bootstrap -format=json >"${init_file}" 2>/dev/null; then
+  if remote_exec "${first_consul_ip}" \
+    "consul acl bootstrap -format=json -ca-file=/opt/consul/tls/ca.crt -client-cert=/opt/consul/tls/server.crt -client-key=/opt/consul/tls/server.key -http-addr=https://127.0.0.1:8501" \
+    >"${init_file}" 2>/dev/null; then
     log "ACL bootstrap complete."
     log "IMPORTANT: The bootstrap token has been saved to consul-init.json." "" "!!"
     log "           Store this file securely and delete it from disk." "" "  "
@@ -99,8 +87,7 @@ configure_snapshot_agent() {
 
   printf '%s\n' "${consul_ips}" | while read -r ip; do
     log "  Writing snapshot token on ${ip}."
-    # shellcheck disable=SC2086
-    ssh ${ssh_opts} -J "${ssh_user}@${bastion_ip}" "${ssh_user}@${ip}" \
+    remote_exec "${ip}" \
       "sudo sed -i 's|^CONSUL_HTTP_TOKEN=.*|CONSUL_HTTP_TOKEN=${bootstrap_token}|' /etc/consul.d/snapshot-token && sudo systemctl enable --now consul-snapshot-agent"
   done
 
@@ -120,8 +107,6 @@ main() {
   }
 
   read_terraform_outputs
-  trap cleanup EXIT
-  setup_tunnel
   wait_for_consul
   bootstrap_acl
   configure_snapshot_agent
