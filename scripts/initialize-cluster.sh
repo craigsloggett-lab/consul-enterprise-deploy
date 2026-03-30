@@ -30,24 +30,6 @@ read_terraform_outputs() {
   log "  SSH user:" "${ssh_user}"
 }
 
-accept_host_keys() {
-  log "Accepting SSH host keys."
-
-  # Accept the bastion host key directly.
-  if ! ssh-keygen -F "${bastion_ip}" >/dev/null 2>&1; then
-    ssh-keyscan -H "${bastion_ip}" >>~/.ssh/known_hosts 2>/dev/null
-  fi
-
-  # Accept internal node keys by running ssh-keyscan on the bastion.
-  printf '%s\n' "${consul_ips}" | while read -r ip; do
-    if ! ssh-keygen -F "${ip}" >/dev/null 2>&1; then
-      # shellcheck disable=SC2086
-      ssh ${ssh_opts} "${ssh_user}@${bastion_ip}" \
-        "ssh-keyscan -H ${ip} 2>/dev/null" >>~/.ssh/known_hosts
-    fi
-  done
-}
-
 remote_exec() {
   target_ip="${1:?target IP required}"
   shift
@@ -115,7 +97,7 @@ configure_snapshot_agent() {
 main() {
   set -ef
 
-  ssh_opts="-o ConnectTimeout=10 -o LogLevel=ERROR"
+  ssh_opts="-o StrictHostKeyChecking=accept-new -o ConnectTimeout=10 -o LogLevel=ERROR"
 
   # Colors are automatically disabled if output is not a terminal.
   ! [ -t 2 ] || {
@@ -125,7 +107,6 @@ main() {
   }
 
   read_terraform_outputs
-  accept_host_keys
   wait_for_consul
   bootstrap_acl
   configure_snapshot_agent
