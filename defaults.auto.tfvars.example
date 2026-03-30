@@ -1,3 +1,11 @@
-# Any file ending in .auto.tfvars is automatically loaded in lexicographical 
-# order, enabling the ability to split variable definitions into multiple 
-# files.
+project_name      = "lab"
+route53_zone_name = "example.com"
+vpc_name          = "hashistack"
+consul_license    = "your-consul-enterprise-license-here"
+
+ec2_key_pair_name = "my-key-pair"
+ec2_ami_owner     = "123456789012"
+ec2_ami_name      = "ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-*"
+
+nlb_internal             = false
+consul_api_allowed_cidrs = ["0.0.0.0/0"]
