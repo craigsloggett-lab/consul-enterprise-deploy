@@ -30,6 +30,16 @@ read_terraform_outputs() {
   log "  SSH user:" "${ssh_user}"
 }
 
+accept_host_keys() {
+  log "Accepting SSH host keys."
+
+  for host in ${bastion_ip} ${consul_ips}; do
+    if ! ssh-keygen -F "${host}" >/dev/null 2>&1; then
+      ssh-keyscan -H "${host}" >>~/.ssh/known_hosts 2>/dev/null
+    fi
+  done
+}
+
 remote_exec() {
   target_ip="${1:?target IP required}"
   shift
@@ -97,7 +107,7 @@ configure_snapshot_agent() {
 main() {
   set -ef
 
-  ssh_opts="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=10 -o LogLevel=ERROR"
+  ssh_opts="-o ConnectTimeout=10 -o LogLevel=ERROR"
 
   # Colors are automatically disabled if output is not a terminal.
   ! [ -t 2 ] || {
@@ -107,6 +117,7 @@ main() {
   }
 
   read_terraform_outputs
+  accept_host_keys
   wait_for_consul
   bootstrap_acl
   configure_snapshot_agent
