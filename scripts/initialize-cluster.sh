@@ -33,9 +33,17 @@ read_terraform_outputs() {
 accept_host_keys() {
   log "Accepting SSH host keys."
 
-  for host in ${bastion_ip} ${consul_ips}; do
-    if ! ssh-keygen -F "${host}" >/dev/null 2>&1; then
-      ssh-keyscan -H "${host}" >>~/.ssh/known_hosts 2>/dev/null
+  # Accept the bastion host key directly.
+  if ! ssh-keygen -F "${bastion_ip}" >/dev/null 2>&1; then
+    ssh-keyscan -H "${bastion_ip}" >>~/.ssh/known_hosts 2>/dev/null
+  fi
+
+  # Accept internal node keys by running ssh-keyscan on the bastion.
+  printf '%s\n' "${consul_ips}" | while read -r ip; do
+    if ! ssh-keygen -F "${ip}" >/dev/null 2>&1; then
+      # shellcheck disable=SC2086
+      ssh ${ssh_opts} "${ssh_user}@${bastion_ip}" \
+        "ssh-keyscan -H ${ip} 2>/dev/null" >>~/.ssh/known_hosts
     fi
   done
 }
@@ -53,7 +61,7 @@ wait_for_consul() {
   attempts=0
   max_attempts=30
   while ! remote_exec "${first_consul_ip}" \
-    "curl -sf --cacert /opt/consul/tls/ca.crt --cert /opt/consul/tls/server.crt --key /opt/consul/tls/server.key https://127.0.0.1:8501/v1/status/leader" >/dev/null 2>&1; do
+    "sudo curl -sf --cacert /opt/consul/tls/ca.crt --cert /opt/consul/tls/server.crt --key /opt/consul/tls/server.key https://127.0.0.1:8501/v1/status/leader" >/dev/null 2>&1; do
     attempts=$((attempts + 1))
     if [ "${attempts}" -ge "${max_attempts}" ]; then
       log "ERROR: Consul not reachable after ${max_attempts} attempts."
@@ -77,7 +85,7 @@ bootstrap_acl() {
   log "Bootstrapping Consul ACL system."
 
   if remote_exec "${first_consul_ip}" \
-    "consul acl bootstrap -format=json -ca-file=/opt/consul/tls/ca.crt -client-cert=/opt/consul/tls/server.crt -client-key=/opt/consul/tls/server.key -http-addr=https://127.0.0.1:8501" \
+    "sudo consul acl bootstrap -format=json -ca-file=/opt/consul/tls/ca.crt -client-cert=/opt/consul/tls/server.crt -client-key=/opt/consul/tls/server.key -http-addr=https://127.0.0.1:8501" \
     >"${init_file}" 2>/dev/null; then
     log "ACL bootstrap complete."
     log "IMPORTANT: The bootstrap token has been saved to consul-init.json." "" "!!"
@@ -95,7 +103,7 @@ configure_snapshot_agent() {
   init_file="$(cd "$(dirname "$0")" && pwd)/consul-init.json"
   bootstrap_token=$(jq -r '.SecretID' "${init_file}")
 
-  printf '%s\n' "${consul_ips}" | while read -r ip; do
+  for ip in ${consul_ips}; do
     log "  Writing snapshot token on ${ip}."
     remote_exec "${ip}" \
       "sudo sed -i 's|^CONSUL_HTTP_TOKEN=.*|CONSUL_HTTP_TOKEN=${bootstrap_token}|' /etc/consul.d/snapshot-token && sudo systemctl enable --now consul-snapshot-agent"
