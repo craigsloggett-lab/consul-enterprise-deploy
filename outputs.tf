@@ -28,3 +28,28 @@ output "consul_ca_cert" {
   value       = module.consul.consul_ca_cert
   sensitive   = true
 }
+
+output "consul_ca_cert_secret_arn" {
+  description = "ARN of the Secrets Manager secret containing the Consul CA certificate."
+  value       = module.consul.ca_cert_secret.arn
+}
+
+output "consul_gossip_key_secret_arn" {
+  description = "ARN of the Secrets Manager secret containing the Consul gossip encryption key."
+  value       = module.consul.gossip_key_secret.arn
+}
+
+output "consul_security_group_id" {
+  description = "ID of the Consul cluster security group."
+  value       = module.consul.security_group.id
+}
+
+output "consul_cluster_tag" {
+  description = "EC2 tag key and value used for Consul auto-join."
+  value       = module.consul.cluster_tag
+}
+
+output "consul_datacenter" {
+  description = "Consul datacenter name."
+  value       = module.consul.datacenter
+}
