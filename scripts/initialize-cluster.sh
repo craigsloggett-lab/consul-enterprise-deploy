@@ -12,6 +12,8 @@ read_terraform_outputs() {
   repo_root="$(cd "$(dirname "$0")/.." && pwd)"
   bastion_ip=$(cd "${repo_root}" && terraform output -raw bastion_public_ip)
   consul_ips=$(cd "${repo_root}" && terraform output -json consul_private_ips | jq -r '.[]')
+  consul_ca_cert=$(cd "${repo_root}" && terraform output -raw consul_ca_cert)
+  consul_token_secret_arn=$(cd "${repo_root}" && terraform output -raw consul_token_secret_arn)
   ami_name=$(cd "${repo_root}" && terraform output -raw ec2_ami_name)
 
   first_consul_ip=$(printf '%s\n' "${consul_ips}" | head -1)
@@ -79,6 +81,52 @@ bootstrap_acl() {
   fi
 }
 
+create_nomad_token() {
+  init_file="$(cd "$(dirname "$0")" && pwd)/consul-init.json"
+  bootstrap_token=$(jq -r '.SecretID' "${init_file}")
+
+  # Skip if the secret already contains a real token (not the placeholder).
+  current_value=$(aws secretsmanager get-secret-value \
+    --secret-id "${consul_token_secret_arn}" \
+    --region us-east-1 \
+    --query 'SecretString' --output text 2>/dev/null || true)
+
+  if [ -n "${current_value}" ] && [ "${current_value}" != "PLACEHOLDER" ]; then
+    log "Nomad token already exists in Secrets Manager, skipping."
+    return
+  fi
+
+  log "Creating Consul ACL token for Nomad."
+
+  ca_file="$(mktemp)"
+  printf '%s' "${consul_ca_cert}" >"${ca_file}"
+
+  consul_url="$(cd "${repo_root}" && terraform output -raw consul_url)"
+
+  nomad_token=$(curl -sf \
+    --cacert "${ca_file}" \
+    -X PUT \
+    -H "X-Consul-Token: ${bootstrap_token}" \
+    -d '{"Description":"Nomad agent token","NodeIdentities":[{"NodeName":"nomad-server","Datacenter":"dc1"}],"ServiceIdentities":[{"ServiceName":"nomad","Datacenters":["dc1"]}]}' \
+    "${consul_url}/v1/acl/token" | jq -r '.SecretID')
+
+  rm -f "${ca_file}"
+
+  if [ -z "${nomad_token}" ] || [ "${nomad_token}" = "null" ]; then
+    log "ERROR: Failed to create Nomad ACL token."
+    exit 1
+  fi
+
+  log "Storing Nomad token in Secrets Manager."
+
+  aws secretsmanager put-secret-value \
+    --secret-id "${consul_token_secret_arn}" \
+    --secret-string "${nomad_token}" \
+    --region us-east-1 >/dev/null
+
+  log "Nomad token created and stored in Secrets Manager."
+}
+
 configure_snapshot_agent() {
   log "Configuring snapshot agent token on all nodes."
 
@@ -109,6 +157,7 @@ main() {
   read_terraform_outputs
   wait_for_consul
   bootstrap_acl
+  create_nomad_token
   configure_snapshot_agent
 }
 
