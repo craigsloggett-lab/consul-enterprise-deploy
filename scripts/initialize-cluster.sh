@@ -96,18 +96,28 @@ create_nomad_token() {
     return
   fi
 
-  log "Creating Consul ACL token for Nomad."
+  log "Creating Consul ACL policy and token for Nomad."
 
   ca_file="$(mktemp)"
   printf '%s' "${consul_ca_cert}" >"${ca_file}"
 
   consul_url="$(cd "${repo_root}" && terraform output -raw consul_url)"
 
+  # Create the nomad-agent policy (idempotent — ignore 409 if it already exists).
+  policy_rules='node_prefix "" { policy = "write" }\nservice_prefix "" { policy = "read" }\nservice "nomad" { policy = "write" }\nservice "nomad-client" { policy = "write" }\nagent_prefix "" { policy = "read" }'
+
+  curl -sf --cacert "${ca_file}" \
+    -X PUT \
+    -H "X-Consul-Token: ${bootstrap_token}" \
+    -d "{\"Name\":\"nomad-agent\",\"Rules\":\"${policy_rules}\"}" \
+    "${consul_url}/v1/acl/policy" >/dev/null 2>&1 || true
+
+  # Create the token with the policy.
   nomad_token=$(curl -sf \
     --cacert "${ca_file}" \
     -X PUT \
     -H "X-Consul-Token: ${bootstrap_token}" \
-    -d '{"Description":"Nomad agent token","NodeIdentities":[{"NodeName":"nomad-server","Datacenter":"dc1"}],"ServiceIdentities":[{"ServiceName":"nomad","Datacenters":["dc1"]}]}' \
+    -d '{"Description":"Nomad agent token","Policies":[{"Name":"nomad-agent"}]}' \
     "${consul_url}/v1/acl/token" | jq -r '.SecretID')
 
   rm -f "${ca_file}"
