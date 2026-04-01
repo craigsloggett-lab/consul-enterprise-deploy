@@ -39,6 +39,11 @@ output "consul_gossip_key_secret_arn" {
   value       = module.consul.gossip_key_secret.arn
 }
 
+output "consul_token_secret_arn" {
+  description = "ARN of the Secrets Manager secret containing the Consul ACL token for Nomad."
+  value       = module.consul.nomad_token_secret.arn
+}
+
 output "consul_security_group_id" {
   description = "ID of the Consul cluster security group."
   value       = module.consul.security_group.id
