@@ -31,7 +31,7 @@ repository from this template:
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_consul"></a> [consul](#module\_consul) | git::https://github.com/craigsloggett/terraform-aws-consul-enterprise | 585705d3b6706aecfa62e5dfd1498e92ec19d367 |
+| <a name="module_consul"></a> [consul](#module\_consul) | git::https://github.com/craigsloggett/terraform-aws-consul-enterprise | eb93c5b4712c35750219c2e477f81ac437b2aab6 |
 
 ## Inputs
 
@@ -73,4 +73,6 @@ repository from this template:
 | <a name="output_consul_token_secret_arn"></a> [consul\_token\_secret\_arn](#output\_consul\_token\_secret\_arn) | ARN of the Secrets Manager secret containing the Consul ACL token for Nomad. |
 | <a name="output_consul_url"></a> [consul\_url](#output\_consul\_url) | URL of the Consul cluster. |
 | <a name="output_ec2_ami_name"></a> [ec2\_ami\_name](#output\_ec2\_ami\_name) | Name of the AMI used for EC2 instances. |
+| <a name="output_nomad_client_service_name"></a> [nomad\_client\_service\_name](#output\_nomad\_client\_service\_name) | Consul service name Nomad clients will register as. |
+| <a name="output_nomad_server_service_name"></a> [nomad\_server\_service\_name](#output\_nomad\_server\_service\_name) | Consul service name Nomad servers will register as. |
 <!-- END_TF_DOCS -->

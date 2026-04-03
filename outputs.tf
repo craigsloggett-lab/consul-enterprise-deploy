@@ -58,3 +58,13 @@ output "consul_datacenter" {
   description = "Consul datacenter name."
   value       = module.consul.datacenter
 }
+
+output "nomad_server_service_name" {
+  description = "Consul service name Nomad servers will register as."
+  value       = module.consul.nomad_server_service_name
+}
+
+output "nomad_client_service_name" {
+  description = "Consul service name Nomad clients will register as."
+  value       = module.consul.nomad_client_service_name
+}
