@@ -75,4 +75,5 @@ repository from this template:
 | <a name="output_ec2_ami_name"></a> [ec2\_ami\_name](#output\_ec2\_ami\_name) | Name of the AMI used for EC2 instances. |
 | <a name="output_nomad_client_service_name"></a> [nomad\_client\_service\_name](#output\_nomad\_client\_service\_name) | Consul service name Nomad clients will register as. |
 | <a name="output_nomad_server_service_name"></a> [nomad\_server\_service\_name](#output\_nomad\_server\_service\_name) | Consul service name Nomad servers will register as. |
+| <a name="output_nomad_snapshot_service_name"></a> [nomad\_snapshot\_service\_name](#output\_nomad\_snapshot\_service\_name) | Consul service name the Nomad snapshot agent will register as. |
 <!-- END_TF_DOCS -->
