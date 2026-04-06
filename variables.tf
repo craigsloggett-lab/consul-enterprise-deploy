@@ -45,3 +45,9 @@ variable "consul_api_allowed_cidrs" {
   description = "CIDR blocks allowed to reach the Consul API (port 8501) from outside the VPC. Only effective when nlb_internal is false."
   default     = []
 }
+
+variable "consul_instance_type" {
+  type        = string
+  description = "EC2 instance type for Consul nodes."
+  default     = "m5.large"
+}
