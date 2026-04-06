@@ -56,7 +56,7 @@ module "consul" {
     public_subnet_ids  = data.aws_subnets.public.ids
   }
 
-  nlb_internal             = var.nlb_internal
-  consul_api_allowed_cidrs = var.consul_api_allowed_cidrs
-  consul_instance_type     = var.consul_instance_type
+  nlb_internal                = var.nlb_internal
+  consul_api_allowed_cidrs    = var.consul_api_allowed_cidrs
+  consul_server_instance_type = var.consul_server_instance_type
 }

@@ -46,8 +46,8 @@ variable "consul_api_allowed_cidrs" {
   default     = []
 }
 
-variable "consul_instance_type" {
+variable "consul_server_instance_type" {
   type        = string
-  description = "EC2 instance type for Consul nodes."
+  description = "EC2 instance type for Consul server nodes."
   default     = "m5.large"
 }

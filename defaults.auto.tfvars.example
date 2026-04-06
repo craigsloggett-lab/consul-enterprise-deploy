@@ -9,4 +9,4 @@ ec2_ami_name      = "ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-*
 
 nlb_internal             = false
 consul_api_allowed_cidrs = ["0.0.0.0/0"]
-consul_instance_type     = "m5.large"
+consul_server_instance_type = "m5.large"
