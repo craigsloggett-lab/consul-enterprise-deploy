@@ -97,7 +97,7 @@ wait_for_consul() {
 }
 
 bootstrap_acl() {
-  init_file="$(cd "$(dirname "$0")" && pwd)/scripts/consul-init.json"
+  init_file="$(cd "$(dirname "$0")" && pwd)/consul-init.json"
 
   # Check if ACL system is already bootstrapped.
   if [ -f "${init_file}" ]; then
