@@ -29,11 +29,6 @@ output "consul_ca_cert" {
   sensitive   = true
 }
 
-output "consul_ca_cert_secret_arn" {
-  description = "ARN of the Secrets Manager secret containing the Consul CA certificate."
-  value       = module.consul.ca_cert_secret.arn
-}
-
 output "consul_gossip_key_secret_arn" {
   description = "ARN of the Secrets Manager secret containing the Consul gossip encryption key."
   value       = module.consul.gossip_key_secret.arn
