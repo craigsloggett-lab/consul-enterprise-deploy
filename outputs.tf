@@ -8,10 +8,10 @@ output "bastion_public_ip" {
   value       = module.consul.bastion_public_ip
 }
 
-output "consul_private_ips" {
-  description = "Private IPs of the Consul nodes."
-  value       = module.consul.consul_private_ips
-}
+#output "consul_private_ips" {
+#  description = "Private IPs of the Consul nodes."
+#  value       = module.consul.consul_private_ips
+#}
 
 output "consul_target_group_arn" {
   description = "ARN of the Consul NLB target group."
