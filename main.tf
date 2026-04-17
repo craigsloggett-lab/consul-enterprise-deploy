@@ -43,7 +43,7 @@ data "aws_ami" "selected" {
 
 module "consul" {
   # tflint-ignore: terraform_module_pinned_source
-  source = "git::https://github.com/craigsloggett/terraform-aws-consul-enterprise?ref=f54973b5605b50ec953647f9b58e4f237d37e5b7"
+  source = "git::https://github.com/craigsloggett/terraform-aws-consul-enterprise?ref=b99af2a936690928b44a6efec26fc3f96720be72"
 
   project_name      = var.project_name
   route53_zone      = data.aws_route53_zone.consul
@@ -61,4 +61,5 @@ module "consul" {
   consul_api_allowed_cidrs               = var.consul_api_allowed_cidrs
   consul_server_instance_type            = var.consul_server_instance_type
   vault_tls_ca_bundle_ssm_parameter_name = var.vault_tls_ca_bundle_ssm_parameter_name
+  vault_iam_role_name                    = var.vault_iam_role_name
 }
