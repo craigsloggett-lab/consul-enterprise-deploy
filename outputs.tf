@@ -44,9 +44,9 @@ output "consul_security_group_id" {
   value       = module.consul.security_group.id
 }
 
-output "consul_cluster_tag" {
+output "consul_auto_join_ec2_tag" {
   description = "EC2 tag key and value used for Consul auto-join."
-  value       = module.consul.cluster_tag
+  value       = module.consul.consul_auto_join_ec2_tag
 }
 
 output "consul_datacenter" {
