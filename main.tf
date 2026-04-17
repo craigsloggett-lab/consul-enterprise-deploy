@@ -47,7 +47,7 @@ data "aws_iam_roles" "vault_server" {
 
 module "consul" {
   # tflint-ignore: terraform_module_pinned_source
-  source = "git::https://github.com/craigsloggett/terraform-aws-consul-enterprise?ref=72a8540d58e53fb0936aed82c2a2bdef5fd9da19"
+  source = "git::https://github.com/craigsloggett/terraform-aws-consul-enterprise?ref=eca92528b19f3a7412e472d7f30369f0dfe520bf"
 
   project_name      = var.project_name
   route53_zone      = data.aws_route53_zone.consul
