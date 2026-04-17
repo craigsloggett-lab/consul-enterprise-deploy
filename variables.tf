@@ -51,3 +51,9 @@ variable "consul_server_instance_type" {
   description = "EC2 instance type for Consul server nodes."
   default     = "m5.large"
 }
+
+variable "vault_tls_ca_bundle_ssm_parameter_name" {
+  type        = string
+  description = "SSM parameter name to fetch the Vault CA PEM."
+  default     = "/${var.project_name}/vault/tls/ca-bundle"
+}
