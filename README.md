@@ -31,7 +31,7 @@ repository from this template:
 
 | Name | Source | Version |
 | ---- | ------ | ------- |
-| <a name="module_consul"></a> [consul](#module\_consul) | git::https://github.com/craigsloggett/terraform-aws-consul-enterprise | 9af2a69c923287b74e4b46a7f7dc08dcb95f1ba9 |
+| <a name="module_consul"></a> [consul](#module\_consul) | git::https://github.com/craigsloggett/terraform-aws-consul-enterprise | 5d91636667aa68c3e9d577a4c8dfb8069afe964f |
 
 ## Inputs
 
@@ -70,7 +70,6 @@ repository from this template:
 | <a name="output_consul_ca_cert"></a> [consul\_ca\_cert](#output\_consul\_ca\_cert) | CA certificate for trusting the Consul TLS chain. |
 | <a name="output_consul_datacenter"></a> [consul\_datacenter](#output\_consul\_datacenter) | Consul datacenter name. |
 | <a name="output_consul_gossip_key_secret_arn"></a> [consul\_gossip\_key\_secret\_arn](#output\_consul\_gossip\_key\_secret\_arn) | ARN of the Secrets Manager secret containing the Consul gossip encryption key. |
-| <a name="output_consul_private_ips"></a> [consul\_private\_ips](#output\_consul\_private\_ips) | Private IPs of the Consul nodes. |
 | <a name="output_consul_security_group_id"></a> [consul\_security\_group\_id](#output\_consul\_security\_group\_id) | ID of the Consul cluster security group. |
 | <a name="output_consul_target_group_arn"></a> [consul\_target\_group\_arn](#output\_consul\_target\_group\_arn) | ARN of the Consul NLB target group. |
 | <a name="output_consul_token_secret_arn"></a> [consul\_token\_secret\_arn](#output\_consul\_token\_secret\_arn) | ARN of the Secrets Manager secret containing the Consul ACL token for Nomad. |
