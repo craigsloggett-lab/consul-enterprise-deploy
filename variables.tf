@@ -58,7 +58,3 @@ variable "vault_tls_ca_bundle_ssm_parameter_name" {
   default     = "/lab/vault/tls/ca-bundle"
 }
 
-variable "vault_iam_role_name" {
-  type        = string
-  description = "Name of the Vault server IAM role (e.g., lab-vault-xxxxxxxx). Used to grant Vault's AWS auth method permission to resolve the Consul server IAM role during login."
-}
