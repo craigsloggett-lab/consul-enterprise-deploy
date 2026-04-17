@@ -32,7 +32,7 @@ repository from this template:
 
 | Name | Source | Version |
 | ---- | ------ | ------- |
-| <a name="module_consul"></a> [consul](#module\_consul) | git::https://github.com/craigsloggett/terraform-aws-consul-enterprise | eca92528b19f3a7412e472d7f30369f0dfe520bf |
+| <a name="module_consul"></a> [consul](#module\_consul) | git::https://github.com/craigsloggett/terraform-aws-consul-enterprise | 7738f07de7e0c63da0b820020a640df6587cdbda |
 
 ## Inputs
 
@@ -47,7 +47,9 @@ repository from this template:
 | <a name="input_nlb_internal"></a> [nlb\_internal](#input\_nlb\_internal) | Whether the NLB is internal. | `bool` | `true` | no |
 | <a name="input_project_name"></a> [project\_name](#input\_project\_name) | Name prefix for all resources. | `string` | n/a | yes |
 | <a name="input_route53_zone_name"></a> [route53\_zone\_name](#input\_route53\_zone\_name) | Name of the existing Route 53 hosted zone. | `string` | n/a | yes |
+| <a name="input_vault_iam_role_name"></a> [vault\_iam\_role\_name](#input\_vault\_iam\_role\_name) | Name of the Vault IAM role being updated with Consul policies. | `string` | n/a | yes |
 | <a name="input_vault_tls_ca_bundle_ssm_parameter_name"></a> [vault\_tls\_ca\_bundle\_ssm\_parameter\_name](#input\_vault\_tls\_ca\_bundle\_ssm\_parameter\_name) | SSM parameter name to fetch the Vault CA PEM. | `string` | `"/lab/vault/tls/ca-bundle"` | no |
+| <a name="input_vault_url"></a> [vault\_url](#input\_vault\_url) | URL of the Vault cluster. | `string` | n/a | yes |
 | <a name="input_vpc_name"></a> [vpc\_name](#input\_vpc\_name) | Name tag of the existing VPC. | `string` | n/a | yes |
 
 ## Resources

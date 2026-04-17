@@ -17,17 +17,46 @@ check_aws_auth() {
 read_terraform_outputs() {
   log "Reading Terraform outputs."
 
-  repo_root="$(cd "$(dirname "$0")/.." && pwd)"
-  bastion_ip=$(cd "${repo_root}" && terraform output -raw bastion_public_ip)
-  consul_ips=$(cd "${repo_root}" && terraform output -json consul_private_ips | jq -r '.[]')
-  consul_url=$(cd "${repo_root}" && terraform output -raw consul_url)
-  consul_token_secret_arn=$(cd "${repo_root}" && terraform output -raw consul_token_secret_arn)
-  ami_name=$(cd "${repo_root}" && terraform output -raw ec2_ami_name)
-  nomad_server_service_name=$(cd "${repo_root}" && terraform output -raw nomad_server_service_name)
-  nomad_client_service_name=$(cd "${repo_root}" && terraform output -raw nomad_client_service_name)
-  nomad_snapshot_service_name=$(cd "${repo_root}" && terraform output -raw nomad_snapshot_service_name)
+  # Switch to the Terraform root directory.
+  cd "$(dirname "$0")/.."
 
-  first_consul_ip=$(printf '%s\n' "${consul_ips}" | head -1)
+  terraform_output="$(terraform output -json)"
+  bastion_ip="$(
+    printf '%s\n' "${terraform_output}" |
+      jq -r '.bastion_public_ip.value'
+  )"
+  consul_ips="$(
+    printf '%s\n' "${terraform_output}" |
+      jq -r '.consul_private_ips.value.[]'
+  )"
+  consul_url="$(
+    printf '%s\n' "${terraform_output}" |
+      jq -r '.consul_url.value'
+  )"
+  consul_token_secret_arn="$(
+    printf '%s\n' "${terraform_output}" |
+      jq -r '.consul_token_secret_arn.value'
+  )"
+  ami_name="$(
+    printf '%s\n' "${terraform_output}" |
+      jq -r '.ec2_ami_name.value'
+  )"
+  nomad_server_service_name="$(
+    printf '%s\n' "${terraform_output}" |
+      jq -r '.nomad_server_service_name.value'
+  )"
+  nomad_client_service_name="$(
+    printf '%s\n' "${terraform_output}" |
+      jq -r '.nomad_client_service_name.value'
+  )"
+  nomad_snapshot_service_name="$(
+    printf '%s\n' "${terraform_output}" |
+      jq -r '.nomad_snapshot_service_name.value'
+  )"
+  first_consul_ip="$(
+    printf '%s\n' "${consul_ips}" |
+      head -1
+  )"
 
   case "${ami_name}" in
     *ubuntu*) ssh_user="ubuntu" ;;
@@ -46,8 +75,7 @@ read_terraform_outputs() {
 remote_exec() {
   target_ip="${1:?target IP required}"
   shift
-  # shellcheck disable=SC2086
-  ssh ${ssh_opts} -J "${ssh_user}@${bastion_ip}" "${ssh_user}@${target_ip}" "$@"
+  ssh -o StrictHostKeyChecking=no -o LogLevel=ERROR -o UserKnownHostsFile=/dev/null -J "${ssh_user}@${bastion_ip}" "${ssh_user}@${target_ip}" "$@"
 }
 
 wait_for_consul() {
@@ -206,8 +234,6 @@ configure_snapshot_agent() {
 main() {
   set -ef
 
-  ssh_opts="-o StrictHostKeyChecking=accept-new -o ConnectTimeout=10 -o LogLevel=ERROR"
-
   # Colors are automatically disabled if output is not a terminal.
   ! [ -t 2 ] || {
     c1='\033[1;33m'
@@ -215,13 +241,27 @@ main() {
     c3='\033[m'
   }
 
-  check_aws_auth
+  # Get the inputs to this script.
   read_terraform_outputs
+
+  # Remove stale bastion host key
+  ssh-keygen -R "${bastion_ip}" >/dev/null 2>&1
+
+  # Add Bastion host key to known_hosts without confirmation
+  ssh -o StrictHostKeyChecking=no -o LogLevel=ERROR "${ssh_user}@${bastion_ip}" ':'
+
+  # Initialize the cluster.
+  check_aws_auth
   wait_for_consul
   bootstrap_acl
   configure_agent_tokens
   create_nomad_token
   configure_snapshot_agent
+
+  # Present SSH jump commands for convenience.
+  for ip in ${consul_ips}; do
+    log "To login to ${ip}:" "ssh -J ubuntu@${bastion_ip} ubuntu@${ip}"
+  done
 }
 
 main "$@"

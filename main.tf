@@ -43,7 +43,7 @@ data "aws_ami" "selected" {
 
 module "consul" {
   # tflint-ignore: terraform_module_pinned_source
-  source = "git::https://github.com/craigsloggett/terraform-aws-consul-enterprise?ref=eca92528b19f3a7412e472d7f30369f0dfe520bf"
+  source = "git::https://github.com/craigsloggett/terraform-aws-consul-enterprise?ref=b69944c056ad4c708152473257ff976280451bf5"
 
   project_name      = var.project_name
   route53_zone      = data.aws_route53_zone.consul
@@ -61,6 +61,6 @@ module "consul" {
   consul_api_allowed_cidrs               = var.consul_api_allowed_cidrs
   consul_server_instance_type            = var.consul_server_instance_type
   vault_tls_ca_bundle_ssm_parameter_name = var.vault_tls_ca_bundle_ssm_parameter_name
-  # TODO: Make this come from the Vault deploy workspace output.
-  vault_iam_role_name = "lab-vault-2026041619364313240000000d"
+  vault_iam_role_name                    = var.vault_iam_role_name
+  vault_url                              = var.vault_url
 }

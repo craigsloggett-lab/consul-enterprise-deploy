@@ -58,3 +58,12 @@ variable "vault_tls_ca_bundle_ssm_parameter_name" {
   default     = "/lab/vault/tls/ca-bundle"
 }
 
+variable "vault_iam_role_name" {
+  type        = string
+  description = "Name of the Vault IAM role being updated with Consul policies."
+}
+
+variable "vault_url" {
+  type        = string
+  description = "URL of the Vault cluster."
+}
