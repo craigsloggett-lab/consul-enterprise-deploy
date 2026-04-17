@@ -43,7 +43,7 @@ data "aws_ami" "selected" {
 
 module "consul" {
   # tflint-ignore: terraform_module_pinned_source
-  source = "git::https://github.com/craigsloggett/terraform-aws-consul-enterprise?ref=b69944c056ad4c708152473257ff976280451bf5"
+  source = "git::https://github.com/craigsloggett/terraform-aws-consul-enterprise?ref=9c8a6c836022122f06a82c5ff5686000f390e689"
 
   project_name      = var.project_name
   route53_zone      = data.aws_route53_zone.consul
