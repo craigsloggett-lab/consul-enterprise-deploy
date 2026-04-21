@@ -58,11 +58,11 @@ data "tfe_outputs" "vault_enterprise_deploy" {
 module "consul" {
   source = "git::https://github.com/craigsloggett/terraform-aws-consul-enterprise?ref=v0.7.4"
 
-  project_name      = var.project_name
-  route53_zone      = data.aws_route53_zone.consul
-  consul_license    = var.consul_license
-  ec2_key_pair_name = var.ec2_key_pair_name
-  ec2_ami           = data.aws_ami.selected
+  project_name              = var.project_name
+  route53_zone              = data.aws_route53_zone.consul
+  consul_enterprise_license = var.consul_enterprise_license
+  ec2_key_pair_name         = var.ec2_key_pair_name
+  ec2_ami                   = data.aws_ami.selected
 
   existing_vpc = {
     vpc_id             = data.aws_vpc.selected.id

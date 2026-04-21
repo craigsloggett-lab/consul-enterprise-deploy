@@ -13,7 +13,7 @@ variable "route53_zone_name" {
   description = "Name of the existing Route 53 hosted zone."
 }
 
-variable "consul_license" {
+variable "consul_enterprise_license" {
   type        = string
   description = "Consul Enterprise license string."
   sensitive   = true
