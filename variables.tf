@@ -51,19 +51,3 @@ variable "consul_server_instance_type" {
   description = "EC2 instance type for Consul server nodes."
   default     = "m5.large"
 }
-
-variable "vault_tls_ca_bundle_ssm_parameter_name" {
-  type        = string
-  description = "SSM parameter name to fetch the Vault CA PEM."
-  default     = "/lab/vault/tls/ca-bundle"
-}
-
-variable "vault_iam_role_name" {
-  type        = string
-  description = "Name of the Vault IAM role being updated with Consul policies."
-}
-
-variable "vault_url" {
-  type        = string
-  description = "URL of the Vault cluster."
-}

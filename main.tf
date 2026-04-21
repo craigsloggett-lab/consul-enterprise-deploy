@@ -41,6 +41,20 @@ data "aws_ami" "selected" {
   }
 }
 
+data "tfe_organization" "this" {
+  name = "craigsloggett-lab"
+}
+
+data "tfe_workspace" "vault_enterprise_deploy" {
+  organization = data.tfe_organization.this.name
+  name         = "vault-enterprise-deploy"
+}
+
+data "tfe_outputs" "vault_enterprise_deploy" {
+  organization = data.tfe_organization.this.name
+  workspace    = data.tfe_workspace.vault_enterprise_deploy.name
+}
+
 module "consul" {
   source = "git::https://github.com/craigsloggett/terraform-aws-consul-enterprise?ref=v0.7.0"
 
@@ -59,7 +73,7 @@ module "consul" {
   nlb_internal                           = var.nlb_internal
   consul_api_allowed_cidrs               = var.consul_api_allowed_cidrs
   consul_server_instance_type            = var.consul_server_instance_type
-  vault_tls_ca_bundle_ssm_parameter_name = var.vault_tls_ca_bundle_ssm_parameter_name
-  vault_iam_role_name                    = var.vault_iam_role_name
-  vault_url                              = var.vault_url
+  vault_tls_ca_bundle_ssm_parameter_name = data.tfe_outputs.vault_enterprise_deploy.values.vault_tls_ca_bundle_ssm_parameter_name
+  vault_iam_role_name                    = data.tfe_outputs.vault_enterprise_deploy.values.vault_iam_role_name
+  vault_url                              = data.tfe_outputs.vault_enterprise_deploy.values.vault_url
 }

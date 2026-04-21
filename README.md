@@ -20,12 +20,14 @@ repository from this template:
 | ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.7 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.0 |
+| <a name="requirement_tfe"></a> [tfe](#requirement\_tfe) | 0.76.2 |
 
 ## Providers
 
 | Name | Version |
 | ---- | ------- |
 | <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 6.0 |
+| <a name="provider_tfe"></a> [tfe](#provider\_tfe) | 0.76.2 |
 
 ## Modules
 
@@ -46,9 +48,6 @@ repository from this template:
 | <a name="input_nlb_internal"></a> [nlb\_internal](#input\_nlb\_internal) | Whether the NLB is internal. | `bool` | `true` | no |
 | <a name="input_project_name"></a> [project\_name](#input\_project\_name) | Name prefix for all resources. | `string` | n/a | yes |
 | <a name="input_route53_zone_name"></a> [route53\_zone\_name](#input\_route53\_zone\_name) | Name of the existing Route 53 hosted zone. | `string` | n/a | yes |
-| <a name="input_vault_iam_role_name"></a> [vault\_iam\_role\_name](#input\_vault\_iam\_role\_name) | Name of the Vault IAM role being updated with Consul policies. | `string` | n/a | yes |
-| <a name="input_vault_tls_ca_bundle_ssm_parameter_name"></a> [vault\_tls\_ca\_bundle\_ssm\_parameter\_name](#input\_vault\_tls\_ca\_bundle\_ssm\_parameter\_name) | SSM parameter name to fetch the Vault CA PEM. | `string` | `"/lab/vault/tls/ca-bundle"` | no |
-| <a name="input_vault_url"></a> [vault\_url](#input\_vault\_url) | URL of the Vault cluster. | `string` | n/a | yes |
 | <a name="input_vpc_name"></a> [vpc\_name](#input\_vpc\_name) | Name tag of the existing VPC. | `string` | n/a | yes |
 
 ## Resources
@@ -60,6 +59,9 @@ repository from this template:
 | [aws_subnets.private](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnets) | data source |
 | [aws_subnets.public](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnets) | data source |
 | [aws_vpc.selected](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/vpc) | data source |
+| [tfe_organization.this](https://registry.terraform.io/providers/hashicorp/tfe/0.76.2/docs/data-sources/organization) | data source |
+| [tfe_outputs.vault_enterprise_deploy](https://registry.terraform.io/providers/hashicorp/tfe/0.76.2/docs/data-sources/outputs) | data source |
+| [tfe_workspace.vault_enterprise_deploy](https://registry.terraform.io/providers/hashicorp/tfe/0.76.2/docs/data-sources/workspace) | data source |
 
 ## Outputs
 
