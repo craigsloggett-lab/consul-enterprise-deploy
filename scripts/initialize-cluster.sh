@@ -14,6 +14,13 @@ check_aws_auth() {
   log "AWS authentication verified."
 }
 
+check_consul_dns() {
+  if ! nc -vz consul.craig-sloggett.sbx.hashidemos.io 443; then
+    log "ERROR: Unable to resolve consul.craig-sloggett.sbx.hashidemos.io. Try again in a bit."
+    exit 1
+  fi
+}
+
 read_terraform_outputs() {
   log "Reading Terraform outputs."
 
