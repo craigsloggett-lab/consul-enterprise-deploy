@@ -3,6 +3,11 @@ output "consul_url" {
   value       = module.consul.consul_url
 }
 
+output "consul_version" {
+  description = "Consul Enterprise version deployed."
+  value       = module.consul.consul_version
+}
+
 output "bastion_public_ip" {
   description = "Public IP of the bastion host."
   value       = module.consul.bastion_public_ip

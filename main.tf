@@ -56,7 +56,7 @@ data "tfe_outputs" "vault_enterprise_deploy" {
 }
 
 module "consul" {
-  source = "git::https://github.com/craigsloggett/terraform-aws-consul-enterprise?ref=v0.7.0"
+  source = "git::https://github.com/craigsloggett/terraform-aws-consul-enterprise?ref=v0.7.3"
 
   project_name      = var.project_name
   route53_zone      = data.aws_route53_zone.consul
