@@ -70,9 +70,11 @@ module "consul" {
     public_subnet_ids  = data.aws_subnets.public.ids
   }
 
-  nlb_internal                           = var.nlb_internal
-  consul_api_allowed_cidrs               = var.consul_api_allowed_cidrs
-  consul_server_instance_type            = var.consul_server_instance_type
+  nlb_internal                = var.nlb_internal
+  consul_api_allowed_cidrs    = var.consul_api_allowed_cidrs
+  consul_server_instance_type = var.consul_server_instance_type
+
+  vault_version                          = data.tfe_outputs.vault_enterprise_deploy.values.vault_version
   vault_tls_ca_bundle_ssm_parameter_name = data.tfe_outputs.vault_enterprise_deploy.values.vault_tls_ca_bundle_ssm_parameter_name
   vault_iam_role_name                    = data.tfe_outputs.vault_enterprise_deploy.values.vault_iam_role_name
   vault_url                              = data.tfe_outputs.vault_enterprise_deploy.values.vault_url
