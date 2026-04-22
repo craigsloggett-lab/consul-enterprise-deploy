@@ -1,13 +1,11 @@
 MODULE_REPO ?= https://github.com/craigsloggett/terraform-aws-consul-enterprise.git
 BRANCH      ?=
 COMMIT_MSG  ?= Validate recent module changes
-LOG_SCRIPT  ?= scripts/get-cloud-init-logs.sh
 
 .PHONY: help
 .PHONY: sha bump
 .PHONY: init validate fmt lint docs check
 .PHONY: stage commit push ship
-.PHONY: logs
 .PHONY: cycle
 
 help:
@@ -16,10 +14,9 @@ help:
 	@echo "  make bump BRANCH=<name>  Point main.tf at latest commit on BRANCH"
 	@echo "  make check               init-upgrade, validate, fmt, lint, docs"
 	@echo "  make ship                stage, commit, push"
-	@echo "  make logs                Tail cloud-init/service logs on instances"
 	@echo ""
 	@echo "Roll-ups:"
-	@echo "  make cycle BRANCH=<name> bump + check + ship (then tail logs manually)"
+	@echo "  make cycle BRANCH=<name> bump + check + ship"
 	@echo ""
 	@echo "Individual steps:"
 	@echo "  sha       Print latest commit on BRANCH (no file changes)"
@@ -78,9 +75,6 @@ push:
 
 ship: commit push
 
-logs:
-	$(LOG_SCRIPT)
-
 cycle: bump check ship
 	@echo ""
-	@echo "Deploy triggered. Run 'make logs' once HCP Terraform picks it up."
+	@echo "Deploy triggered."
