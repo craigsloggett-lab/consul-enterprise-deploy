@@ -56,9 +56,9 @@ read_terraform_outputs() {
     printf '%s\n' "${terraform_output}" |
       jq -r '.nomad_client_service_name.value'
   )"
-  nomad_snapshot_service_name="$(
+  nomad_operator_snapshot_agent_service_name="$(
     printf '%s\n' "${terraform_output}" |
-      jq -r '.nomad_snapshot_service_name.value'
+      jq -r '.nomad_operator_snapshot_agent_service_name.value'
   )"
   first_consul_ip="$(
     printf '%s\n' "${consul_ips}" |
@@ -195,7 +195,7 @@ create_nomad_token() {
     -H "X-Consul-Token: ${bootstrap_token}" \
     --data '{
       "Name": "nomad-agent",
-      "Rules": "node_prefix \"\" { policy = \"write\" }\nservice_prefix \"\" { policy = \"read\" }\nservice \"'"${nomad_server_service_name}"'\" { policy = \"write\" }\nservice \"'"${nomad_client_service_name}"'\" { policy = \"write\" }\nservice \"'"${nomad_snapshot_service_name}"'\" { policy = \"write\" }\nagent_prefix \"\" { policy = \"read\" }\nsession_prefix \"\" { policy = \"write\" }\nkey_prefix \"nomad-snapshot/\" { policy = \"write\" }"
+      "Rules": "node_prefix \"\" { policy = \"write\" }\nservice_prefix \"\" { policy = \"read\" }\nservice \"'"${nomad_server_service_name}"'\" { policy = \"write\" }\nservice \"'"${nomad_client_service_name}"'\" { policy = \"write\" }\nservice \"'"${nomad_operator_snapshot_agent_service_name}"'\" { policy = \"write\" }\nagent_prefix \"\" { policy = \"read\" }\nsession_prefix \"\" { policy = \"write\" }\nkey_prefix \"nomad-operator-snapshot-agent/\" { policy = \"write\" }"
     }' >/dev/null 2>&1 || true
 
   # Create the token with the policy.
