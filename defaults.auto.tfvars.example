@@ -1,7 +1,7 @@
-project_name      = "lab"
-route53_zone_name = "example.com"
-vpc_name          = "hashistack"
-consul_license    = "your-consul-enterprise-license-here"
+project_name              = "lab"
+route53_zone_name         = "example.com"
+vpc_name                  = "hashistack"
+consul_enterprise_license = "your-consul-enterprise-license-here"
 
 ec2_key_pair_name = "my-key-pair"
 ec2_ami_owner     = "123456789012"

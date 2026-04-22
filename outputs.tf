@@ -18,6 +18,11 @@ output "consul_private_ips" {
   value       = module.consul.consul_private_ips
 }
 
+output "consul_snapshots_bucket" {
+  description = "S3 bucket for Consul snapshots."
+  value       = module.consul.consul_snapshots_bucket
+}
+
 output "consul_target_group_arn" {
   description = "ARN of the Consul NLB target group."
   value       = module.consul.consul_target_group_arn
