@@ -33,7 +33,7 @@ repository from this template:
 
 | Name | Source | Version |
 | ---- | ------ | ------- |
-| <a name="module_consul"></a> [consul](#module\_consul) | git::https://github.com/craigsloggett/terraform-aws-consul-enterprise | 9608bbbd51026c04ed3d65384f390d29a412130a |
+| <a name="module_consul"></a> [consul](#module\_consul) | git::https://github.com/craigsloggett/terraform-aws-consul-enterprise | 604d0a42b8240a6623794f0bcbc9c29c169214db |
 
 ## Inputs
 
@@ -81,6 +81,6 @@ repository from this template:
 | <a name="output_consul_version"></a> [consul\_version](#output\_consul\_version) | Consul Enterprise version deployed. |
 | <a name="output_ec2_ami_name"></a> [ec2\_ami\_name](#output\_ec2\_ami\_name) | Name of the AMI used for EC2 instances. |
 | <a name="output_nomad_client_service_name"></a> [nomad\_client\_service\_name](#output\_nomad\_client\_service\_name) | Consul service name Nomad clients will register as. |
+| <a name="output_nomad_operator_snapshot_agent_service_name"></a> [nomad\_operator\_snapshot\_agent\_service\_name](#output\_nomad\_operator\_snapshot\_agent\_service\_name) | Consul service name the Nomad Operator Snapshot Agent will register as. |
 | <a name="output_nomad_server_service_name"></a> [nomad\_server\_service\_name](#output\_nomad\_server\_service\_name) | Consul service name Nomad servers will register as. |
-| <a name="output_nomad_snapshot_service_name"></a> [nomad\_snapshot\_service\_name](#output\_nomad\_snapshot\_service\_name) | Consul service name the Nomad snapshot agent will register as. |
 <!-- END_TF_DOCS -->
