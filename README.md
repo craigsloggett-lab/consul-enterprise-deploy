@@ -33,7 +33,7 @@ repository from this template:
 
 | Name | Source | Version |
 | ---- | ------ | ------- |
-| <a name="module_consul"></a> [consul](#module\_consul) | git::https://github.com/craigsloggett/terraform-aws-consul-enterprise | v0.7.5 |
+| <a name="module_consul"></a> [consul](#module\_consul) | git::https://github.com/craigsloggett/terraform-aws-consul-enterprise | 2b760aa84e806e0e3a1b132e4b8901d2925b2b33 |
 
 ## Inputs
 
