@@ -33,10 +33,19 @@ output "ec2_ami_name" {
   value       = module.consul.ec2_ami_name
 }
 
-output "consul_ca_cert" {
-  description = "CA certificate for trusting the Consul TLS chain."
-  value       = module.consul.consul_ca_cert
-  sensitive   = true
+output "consul_tls_ca_bundle_ssm_parameter_name" {
+  description = "SSM parameter name for the Consul PKI TLS CA bundle."
+  value       = module.consul.consul_tls_ca_bundle_ssm_parameter_name
+}
+
+output "consul_pki_intermediate_ca_csr_ssm_parameter_name" {
+  description = "SSM parameter name where the Consul intermediate CA CSR is published."
+  value       = module.consul.consul_pki_intermediate_ca_csr_ssm_parameter_name
+}
+
+output "consul_pki_intermediate_ca_signed_csr_secret_arn" {
+  description = "Secrets Manager ARN for the signed Consul intermediate CA certificate."
+  value       = module.consul.consul_pki_intermediate_ca_signed_csr_secret_arn
 }
 
 output "consul_gossip_key_secret_arn" {
