@@ -77,4 +77,3 @@ output "consul_datacenter" {
   description = "Consul datacenter name."
   value       = module.consul.datacenter
 }
-

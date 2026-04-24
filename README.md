@@ -26,6 +26,7 @@ An infrastructure as code repository used to deploy a Consul Enterprise cluster 
 | Name | Source | Version |
 | ---- | ------ | ------- |
 | <a name="module_consul"></a> [consul](#module\_consul) | git::https://github.com/craigsloggett/terraform-aws-consul-enterprise | b68a1bbc4afe148c6dd64e2c0a0f229abc2319b7 |
+| <a name="module_consul"></a> [consul](#module\_consul) | git::https://github.com/craigsloggett/terraform-aws-consul-enterprise | 3b9491a5c45d31102b73d13299c1bfe0d568f8c8 |
 
 ## Inputs
 
@@ -71,6 +72,7 @@ An infrastructure as code repository used to deploy a Consul Enterprise cluster 
 | <a name="output_consul_asg_name"></a> [consul\_asg\_name](#output\_consul\_asg\_name) | Name of the Consul Auto Scaling Group. |
 | <a name="output_consul_auto_join_ec2_tag"></a> [consul\_auto\_join\_ec2\_tag](#output\_consul\_auto\_join\_ec2\_tag) | EC2 tag key and value used for Consul auto-join. |
 | <a name="output_consul_bootstrap_token_secret_arn"></a> [consul\_bootstrap\_token\_secret\_arn](#output\_consul\_bootstrap\_token\_secret\_arn) | ARN of the Secrets Manager secret containing the Consul ACL bootstrap token. |
+| <a name="output_consul_ca_cert"></a> [consul\_ca\_cert](#output\_consul\_ca\_cert) | CA certificate for trusting the Consul TLS chain. |
 | <a name="output_consul_datacenter"></a> [consul\_datacenter](#output\_consul\_datacenter) | Consul datacenter name. |
 | <a name="output_consul_gossip_key_secret_arn"></a> [consul\_gossip\_key\_secret\_arn](#output\_consul\_gossip\_key\_secret\_arn) | ARN of the Secrets Manager secret containing the Consul gossip encryption key. |
 | <a name="output_consul_pki_intermediate_ca_csr_ssm_parameter_name"></a> [consul\_pki\_intermediate\_ca\_csr\_ssm\_parameter\_name](#output\_consul\_pki\_intermediate\_ca\_csr\_ssm\_parameter\_name) | SSM parameter name where the Consul intermediate CA CSR is published. |
