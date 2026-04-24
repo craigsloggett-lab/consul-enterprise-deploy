@@ -22,7 +22,7 @@ An infrastructure as code repository used to deploy a Consul Enterprise cluster 
 
 | Name | Source | Version |
 | ---- | ------ | ------- |
-| <a name="module_consul"></a> [consul](#module\_consul) | git::https://github.com/craigsloggett/terraform-aws-consul-enterprise | aaf7ee847bf558ae0dd143ef479369def31e61d4 |
+| <a name="module_consul"></a> [consul](#module\_consul) | git::https://github.com/craigsloggett/terraform-aws-consul-enterprise | 27b854c3682497aabc4b2bbf048e50a8a0bc0276 |
 
 ## Inputs
 
