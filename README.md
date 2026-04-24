@@ -9,20 +9,18 @@ An infrastructure as code repository used to deploy a Consul Enterprise cluster 
 | ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.7 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.0 |
-| <a name="requirement_tfe"></a> [tfe](#requirement\_tfe) | 0.76.2 |
 
 ## Providers
 
 | Name | Version |
 | ---- | ------- |
 | <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 6.0 |
-| <a name="provider_tfe"></a> [tfe](#provider\_tfe) | 0.76.2 |
 
 ## Modules
 
 | Name | Source | Version |
 | ---- | ------ | ------- |
-| <a name="module_consul"></a> [consul](#module\_consul) | git::https://github.com/craigsloggett/terraform-aws-consul-enterprise | a5e0a92276428c6a39b9775705db581356ec3798 |
+| <a name="module_consul"></a> [consul](#module\_consul) | git::https://github.com/craigsloggett/terraform-aws-consul-enterprise | fda4b2fe260e1a322983972c3f05ceb1a4be155c |
 
 ## Inputs
 
@@ -48,9 +46,6 @@ An infrastructure as code repository used to deploy a Consul Enterprise cluster 
 | [aws_subnets.private](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnets) | data source |
 | [aws_subnets.public](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnets) | data source |
 | [aws_vpc.selected](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/vpc) | data source |
-| [tfe_organization.this](https://registry.terraform.io/providers/hashicorp/tfe/0.76.2/docs/data-sources/organization) | data source |
-| [tfe_outputs.vault_enterprise_deploy](https://registry.terraform.io/providers/hashicorp/tfe/0.76.2/docs/data-sources/outputs) | data source |
-| [tfe_workspace.vault_enterprise_deploy](https://registry.terraform.io/providers/hashicorp/tfe/0.76.2/docs/data-sources/workspace) | data source |
 
 ## Outputs
 

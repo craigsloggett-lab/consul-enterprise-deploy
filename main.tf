@@ -41,23 +41,9 @@ data "aws_ami" "selected" {
   }
 }
 
-data "tfe_organization" "this" {
-  name = "craigsloggett-lab"
-}
-
-data "tfe_workspace" "vault_enterprise_deploy" {
-  organization = data.tfe_organization.this.name
-  name         = "vault-enterprise-deploy"
-}
-
-data "tfe_outputs" "vault_enterprise_deploy" {
-  organization = data.tfe_organization.this.name
-  workspace    = data.tfe_workspace.vault_enterprise_deploy.name
-}
-
 module "consul" {
   # tflint-ignore: terraform_module_pinned_source
-  source = "git::https://github.com/craigsloggett/terraform-aws-consul-enterprise?ref=a5e0a92276428c6a39b9775705db581356ec3798"
+  source = "git::https://github.com/craigsloggett/terraform-aws-consul-enterprise?ref=fda4b2fe260e1a322983972c3f05ceb1a4be155c"
 
   project_name              = var.project_name
   route53_zone              = data.aws_route53_zone.consul
@@ -74,9 +60,4 @@ module "consul" {
   nlb_internal                = var.nlb_internal
   consul_api_allowed_cidrs    = var.consul_api_allowed_cidrs
   consul_server_instance_type = var.consul_server_instance_type
-
-  vault_version                          = data.tfe_outputs.vault_enterprise_deploy.values.vault_version
-  vault_tls_ca_bundle_ssm_parameter_name = data.tfe_outputs.vault_enterprise_deploy.values.vault_tls_ca_bundle_ssm_parameter_name
-  vault_iam_role_name                    = data.tfe_outputs.vault_enterprise_deploy.values.vault_iam_role_name
-  vault_url                              = data.tfe_outputs.vault_enterprise_deploy.values.vault_url
 }
