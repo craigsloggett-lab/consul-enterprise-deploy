@@ -10,23 +10,19 @@ An infrastructure as code repository used to deploy a Consul Enterprise cluster 
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.7 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.0 |
 | <a name="requirement_tfe"></a> [tfe](#requirement\_tfe) | 0.76.2 |
-| <a name="requirement_tls"></a> [tls](#requirement\_tls) | 4.1.0 |
 
 ## Providers
 
 | Name | Version |
 | ---- | ------- |
 | <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 6.0 |
-| <a name="provider_terraform"></a> [terraform](#provider\_terraform) | n/a |
 | <a name="provider_tfe"></a> [tfe](#provider\_tfe) | 0.76.2 |
-| <a name="provider_tls"></a> [tls](#provider\_tls) | 4.1.0 |
 
 ## Modules
 
 | Name | Source | Version |
 | ---- | ------ | ------- |
-| <a name="module_consul"></a> [consul](#module\_consul) | git::https://github.com/craigsloggett/terraform-aws-consul-enterprise | b68a1bbc4afe148c6dd64e2c0a0f229abc2319b7 |
-| <a name="module_consul"></a> [consul](#module\_consul) | git::https://github.com/craigsloggett/terraform-aws-consul-enterprise | 3b9491a5c45d31102b73d13299c1bfe0d568f8c8 |
+| <a name="module_consul"></a> [consul](#module\_consul) | git::https://github.com/craigsloggett/terraform-aws-consul-enterprise | a5e0a92276428c6a39b9775705db581356ec3798 |
 
 ## Inputs
 
@@ -47,15 +43,8 @@ An infrastructure as code repository used to deploy a Consul Enterprise cluster 
 
 | Name | Type |
 | ---- | ---- |
-| [aws_secretsmanager_secret_version.consul_pki_intermediate_ca_signed_csr](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/secretsmanager_secret_version) | resource |
-| [terraform_data.wait_for_csr](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
-| [tls_locally_signed_cert.consul_pki_intermediate_ca_signed_csr](https://registry.terraform.io/providers/hashicorp/tls/4.1.0/docs/resources/locally_signed_cert) | resource |
-| [tls_private_key.root_ca](https://registry.terraform.io/providers/hashicorp/tls/4.1.0/docs/resources/private_key) | resource |
-| [tls_self_signed_cert.root_ca](https://registry.terraform.io/providers/hashicorp/tls/4.1.0/docs/resources/self_signed_cert) | resource |
 | [aws_ami.selected](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
-| [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 | [aws_route53_zone.consul](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/route53_zone) | data source |
-| [aws_ssm_parameter.consul_pki_intermediate_ca_csr](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ssm_parameter) | data source |
 | [aws_subnets.private](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnets) | data source |
 | [aws_subnets.public](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnets) | data source |
 | [aws_vpc.selected](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/vpc) | data source |
@@ -68,19 +57,14 @@ An infrastructure as code repository used to deploy a Consul Enterprise cluster 
 | Name | Description |
 | ---- | ----------- |
 | <a name="output_bastion_public_ip"></a> [bastion\_public\_ip](#output\_bastion\_public\_ip) | Public IP of the bastion host. |
-| <a name="output_consul_agent_token_secret_arn"></a> [consul\_agent\_token\_secret\_arn](#output\_consul\_agent\_token\_secret\_arn) | ARN of the Secrets Manager secret containing the Consul server agent ACL token. |
 | <a name="output_consul_asg_name"></a> [consul\_asg\_name](#output\_consul\_asg\_name) | Name of the Consul Auto Scaling Group. |
 | <a name="output_consul_auto_join_ec2_tag"></a> [consul\_auto\_join\_ec2\_tag](#output\_consul\_auto\_join\_ec2\_tag) | EC2 tag key and value used for Consul auto-join. |
 | <a name="output_consul_bootstrap_token_secret_arn"></a> [consul\_bootstrap\_token\_secret\_arn](#output\_consul\_bootstrap\_token\_secret\_arn) | ARN of the Secrets Manager secret containing the Consul ACL bootstrap token. |
-| <a name="output_consul_ca_cert"></a> [consul\_ca\_cert](#output\_consul\_ca\_cert) | CA certificate for trusting the Consul TLS chain. |
 | <a name="output_consul_datacenter"></a> [consul\_datacenter](#output\_consul\_datacenter) | Consul datacenter name. |
 | <a name="output_consul_gossip_key_secret_arn"></a> [consul\_gossip\_key\_secret\_arn](#output\_consul\_gossip\_key\_secret\_arn) | ARN of the Secrets Manager secret containing the Consul gossip encryption key. |
-| <a name="output_consul_pki_intermediate_ca_csr_ssm_parameter_name"></a> [consul\_pki\_intermediate\_ca\_csr\_ssm\_parameter\_name](#output\_consul\_pki\_intermediate\_ca\_csr\_ssm\_parameter\_name) | SSM parameter name where the Consul intermediate CA CSR is published. |
-| <a name="output_consul_pki_intermediate_ca_signed_csr_secret_arn"></a> [consul\_pki\_intermediate\_ca\_signed\_csr\_secret\_arn](#output\_consul\_pki\_intermediate\_ca\_signed\_csr\_secret\_arn) | Secrets Manager ARN for the signed Consul intermediate CA certificate. |
 | <a name="output_consul_security_group_id"></a> [consul\_security\_group\_id](#output\_consul\_security\_group\_id) | ID of the Consul cluster security group. |
 | <a name="output_consul_snapshots_bucket"></a> [consul\_snapshots\_bucket](#output\_consul\_snapshots\_bucket) | S3 bucket for Consul snapshots. |
 | <a name="output_consul_target_group_arn"></a> [consul\_target\_group\_arn](#output\_consul\_target\_group\_arn) | ARN of the Consul NLB target group. |
-| <a name="output_consul_tls_ca_bundle_ssm_parameter_name"></a> [consul\_tls\_ca\_bundle\_ssm\_parameter\_name](#output\_consul\_tls\_ca\_bundle\_ssm\_parameter\_name) | SSM parameter name for the Consul PKI TLS CA bundle. |
 | <a name="output_consul_url"></a> [consul\_url](#output\_consul\_url) | URL of the Consul cluster. |
 | <a name="output_consul_version"></a> [consul\_version](#output\_consul\_version) | Consul Enterprise version deployed. |
 | <a name="output_ec2_ami_name"></a> [ec2\_ami\_name](#output\_ec2\_ami\_name) | Name of the AMI used for EC2 instances. |

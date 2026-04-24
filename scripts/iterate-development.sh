@@ -92,27 +92,27 @@ main() {
 
   read_terraform_outputs
 
-  # Scale the ASG down to 0
-  aws autoscaling update-auto-scaling-group \
-    --auto-scaling-group-name "${asg_name}" \
-    --min-size 0 --desired-capacity 0
+  ## Scale the ASG down to 0
+  #aws autoscaling update-auto-scaling-group \
+  #  --auto-scaling-group-name "${asg_name}" \
+  #  --min-size 0 --desired-capacity 0
 
-  # Grab the current instance IDs
-  ids="$(
-    aws autoscaling describe-auto-scaling-groups \
-      --auto-scaling-group-names "${asg_name}" \
-      --query 'AutoScalingGroups[0].Instances[*].InstanceId' \
-      --output text |
-      tr '\t' '\n'
-  )"
+  ## Grab the current instance IDs
+  #ids="$(
+  #  aws autoscaling describe-auto-scaling-groups \
+  #    --auto-scaling-group-names "${asg_name}" \
+  #    --query 'AutoScalingGroups[0].Instances[*].InstanceId' \
+  #    --output text |
+  #    tr '\t' '\n'
+  #)"
 
-  # shellcheck disable=SC2086
-  # Nuke them to speed up the scale down
-  [ -n "${ids}" ] && aws ec2 terminate-instances --instance-ids ${ids}
+  ## shellcheck disable=SC2086
+  ## Nuke them to speed up the scale down
+  #[ -n "${ids}" ] && aws ec2 terminate-instances --instance-ids ${ids}
 
-  wait_for_asg_empty
-  delete_consul_secrets
-  delete_coordination_ssm_parameters
+  #wait_for_asg_empty
+  #delete_consul_secrets
+  #delete_coordination_ssm_parameters
 }
 
 main "$@"
