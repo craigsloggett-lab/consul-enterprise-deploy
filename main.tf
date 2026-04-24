@@ -57,7 +57,7 @@ data "tfe_outputs" "vault_enterprise_deploy" {
 
 module "consul" {
   # tflint-ignore: terraform_module_pinned_source
-  source = "git::https://github.com/craigsloggett/terraform-aws-consul-enterprise?ref=3b9491a5c45d31102b73d13299c1bfe0d568f8c8"
+  source = "git::https://github.com/craigsloggett/terraform-aws-consul-enterprise?ref=20884993db86fbdc48fe6982a58fcd2cd7213eac"
 
   project_name              = var.project_name
   route53_zone              = data.aws_route53_zone.consul

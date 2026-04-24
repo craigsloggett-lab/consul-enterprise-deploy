@@ -22,7 +22,7 @@ An infrastructure as code repository used to deploy a Consul Enterprise cluster 
 
 | Name | Source | Version |
 | ---- | ------ | ------- |
-| <a name="module_consul"></a> [consul](#module\_consul) | git::https://github.com/craigsloggett/terraform-aws-consul-enterprise | 3b9491a5c45d31102b73d13299c1bfe0d568f8c8 |
+| <a name="module_consul"></a> [consul](#module\_consul) | git::https://github.com/craigsloggett/terraform-aws-consul-enterprise | 20884993db86fbdc48fe6982a58fcd2cd7213eac |
 
 ## Inputs
 
@@ -57,12 +57,13 @@ An infrastructure as code repository used to deploy a Consul Enterprise cluster 
 | Name | Description |
 | ---- | ----------- |
 | <a name="output_bastion_public_ip"></a> [bastion\_public\_ip](#output\_bastion\_public\_ip) | Public IP of the bastion host. |
+| <a name="output_consul_agent_token_secret_arn"></a> [consul\_agent\_token\_secret\_arn](#output\_consul\_agent\_token\_secret\_arn) | ARN of the Secrets Manager secret containing the Consul server agent ACL token. |
+| <a name="output_consul_asg_name"></a> [consul\_asg\_name](#output\_consul\_asg\_name) | Name of the Consul Auto Scaling Group. |
 | <a name="output_consul_auto_join_ec2_tag"></a> [consul\_auto\_join\_ec2\_tag](#output\_consul\_auto\_join\_ec2\_tag) | EC2 tag key and value used for Consul auto-join. |
 | <a name="output_consul_bootstrap_token_secret_arn"></a> [consul\_bootstrap\_token\_secret\_arn](#output\_consul\_bootstrap\_token\_secret\_arn) | ARN of the Secrets Manager secret containing the Consul ACL bootstrap token. |
 | <a name="output_consul_ca_cert"></a> [consul\_ca\_cert](#output\_consul\_ca\_cert) | CA certificate for trusting the Consul TLS chain. |
 | <a name="output_consul_datacenter"></a> [consul\_datacenter](#output\_consul\_datacenter) | Consul datacenter name. |
 | <a name="output_consul_gossip_key_secret_arn"></a> [consul\_gossip\_key\_secret\_arn](#output\_consul\_gossip\_key\_secret\_arn) | ARN of the Secrets Manager secret containing the Consul gossip encryption key. |
-| <a name="output_consul_private_ips"></a> [consul\_private\_ips](#output\_consul\_private\_ips) | Private IPs of the Consul nodes. |
 | <a name="output_consul_security_group_id"></a> [consul\_security\_group\_id](#output\_consul\_security\_group\_id) | ID of the Consul cluster security group. |
 | <a name="output_consul_snapshots_bucket"></a> [consul\_snapshots\_bucket](#output\_consul\_snapshots\_bucket) | S3 bucket for Consul snapshots. |
 | <a name="output_consul_target_group_arn"></a> [consul\_target\_group\_arn](#output\_consul\_target\_group\_arn) | ARN of the Consul NLB target group. |

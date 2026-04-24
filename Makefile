@@ -92,7 +92,7 @@ iterate:
 	scripts/./iterate-development.sh
 
 cycle: COMMIT_MSG = Validate recent module changes
-cycle: bump check ship
+cycle: bump check iterate ship
 	@echo ""
 	@echo "Deploy triggered."
 

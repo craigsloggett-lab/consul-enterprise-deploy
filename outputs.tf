@@ -13,9 +13,9 @@ output "bastion_public_ip" {
   value       = module.consul.bastion_public_ip
 }
 
-output "consul_private_ips" {
-  description = "Private IPs of the Consul nodes."
-  value       = module.consul.consul_private_ips
+output "consul_asg_name" {
+  description = "Name of the Consul Auto Scaling Group."
+  value       = module.consul.consul_asg_name
 }
 
 output "consul_snapshots_bucket" {
@@ -47,6 +47,11 @@ output "consul_gossip_key_secret_arn" {
 output "consul_bootstrap_token_secret_arn" {
   description = "ARN of the Secrets Manager secret containing the Consul ACL bootstrap token."
   value       = module.consul.bootstrap_token_secret.arn
+}
+
+output "consul_agent_token_secret_arn" {
+  description = "ARN of the Secrets Manager secret containing the Consul server agent ACL token."
+  value       = module.consul.consul_agent_token_secret_arn
 }
 
 output "consul_security_group_id" {
