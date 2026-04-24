@@ -44,6 +44,11 @@ output "consul_gossip_key_secret_arn" {
   value       = module.consul.gossip_key_secret.arn
 }
 
+output "consul_bootstrap_token_secret_arn" {
+  description = "ARN of the Secrets Manager secret containing the Consul ACL bootstrap token."
+  value       = module.consul.bootstrap_token_secret.arn
+}
+
 output "consul_token_secret_arn" {
   description = "ARN of the Secrets Manager secret containing the Consul ACL token for Nomad."
   value       = module.consul.nomad_token_secret.arn

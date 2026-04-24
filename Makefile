@@ -4,8 +4,8 @@ COMMIT_MSG  ?= Validate recent module changes
 
 .PHONY: help
 .PHONY: bump latest
-.PHONY: init validate fmt lint docs check
-.PHONY: stage commit push ship
+.PHONY: init validate fmt lint docs check plan
+.PHONY: stage commit push ship iterate
 .PHONY: cycle update
 
 help:
@@ -17,7 +17,7 @@ help:
 	@echo "  make ship                stage, commit, push"
 	@echo ""
 	@echo "Roll-ups:"
-	@echo "  make cycle BRANCH=<name> bump + check + ship"
+	@echo "  make cycle BRANCH=<name> bump + check + iterate + plan + ship"
 	@echo "  make update              latest + check + ship"
 	@echo ""
 	@echo "Individual steps:"
@@ -26,9 +26,11 @@ help:
 	@echo "  fmt       terraform fmt --recursive"
 	@echo "  lint      tflint --recursive --format=compact"
 	@echo "  docs      terraform-docs ."
+	@echo "  plan      terraform plan"
 	@echo "  stage     git add ."
 	@echo "  commit    git commit -m '\$$(COMMIT_MSG)'"
 	@echo "  push      git push"
+	@echo "  iterate   scripts/./iterate-development.sh"
 	@echo ""
 	@echo "Override: MODULE_REPO=<url>"
 
@@ -70,6 +72,9 @@ lint:
 docs: init
 	terraform-docs .
 
+plan:
+	terraform plan
+
 check: init validate fmt lint docs
 
 stage:
@@ -83,8 +88,11 @@ push:
 
 ship: commit push
 
+iterate:
+	scripts/./iterate-development.sh
+
 cycle: COMMIT_MSG = Validate recent module changes
-cycle: bump check ship
+cycle: bump check iterate ship
 	@echo ""
 	@echo "Deploy triggered."
 

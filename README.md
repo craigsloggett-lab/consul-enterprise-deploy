@@ -1,17 +1,6 @@
-# terraform-root-module-template
+# Consul Enterprise Deployment
 
-A GitHub repository template for creating new Terraform root module.
-
-## Usage
-
-The following files require your attention immediately after creating a
-repository from this template:
-
-- [ ] .github/CODEOWNERS
-- [ ] .github/dependabot.yml
-- [ ] .github/workflows/lint.yml
-- [ ] backend.tf
-- [ ] README.md
+An infrastructure as code repository used to deploy a Consul Enterprise cluster to AWS.
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -69,6 +58,7 @@ repository from this template:
 | ---- | ----------- |
 | <a name="output_bastion_public_ip"></a> [bastion\_public\_ip](#output\_bastion\_public\_ip) | Public IP of the bastion host. |
 | <a name="output_consul_auto_join_ec2_tag"></a> [consul\_auto\_join\_ec2\_tag](#output\_consul\_auto\_join\_ec2\_tag) | EC2 tag key and value used for Consul auto-join. |
+| <a name="output_consul_bootstrap_token_secret_arn"></a> [consul\_bootstrap\_token\_secret\_arn](#output\_consul\_bootstrap\_token\_secret\_arn) | ARN of the Secrets Manager secret containing the Consul ACL bootstrap token. |
 | <a name="output_consul_ca_cert"></a> [consul\_ca\_cert](#output\_consul\_ca\_cert) | CA certificate for trusting the Consul TLS chain. |
 | <a name="output_consul_datacenter"></a> [consul\_datacenter](#output\_consul\_datacenter) | Consul datacenter name. |
 | <a name="output_consul_gossip_key_secret_arn"></a> [consul\_gossip\_key\_secret\_arn](#output\_consul\_gossip\_key\_secret\_arn) | ARN of the Secrets Manager secret containing the Consul gossip encryption key. |
