@@ -1,9 +1,5 @@
 #!/bin/sh
 # Usage: ./iterate-development.sh
-#
-# Scales down the Consul ASG, terminates instances, and resets
-# cluster coordination state so the next terraform apply triggers
-# a fresh bootstrap.
 
 log() {
   # Colors are automatically disabled if output is not a terminal
@@ -28,20 +24,52 @@ read_terraform_outputs() {
     printf '%s\n' "${terraform_output}" |
       jq -r '.consul_asg_name.value'
   )"
-  bootstrap_token_secret_arn="$(
-    printf '%s\n' "${terraform_output}" |
-      jq -r '.consul_bootstrap_token_secret_arn.value // empty'
-  )"
-  agent_token_secret_arn="$(
-    printf '%s\n' "${terraform_output}" |
-      jq -r '.consul_agent_token_secret_arn.value // empty'
-  )"
   log "  ASG:" "${asg_name}"
-  log "  Bootstrap token secret:" "${bootstrap_token_secret_arn}"
-  log "  Agent token secret:" "${agent_token_secret_arn}"
 }
 
-wait_for_asg_empty() {
+zero_out_tg_deregistration_delay() {
+  tg_arn="$(
+    aws autoscaling describe-load-balancer-target-groups \
+      --auto-scaling-group-name "${asg_name}" \
+      --query 'LoadBalancerTargetGroups[*].LoadBalancerTargetGroupARN' \
+      --output text
+  )"
+
+  aws elbv2 modify-target-group-attributes \
+    --target-group-arn "${tg_arn}" \
+    --attributes Key=deregistration_delay.timeout_seconds,Value=0
+}
+
+scale_asg_to_zero() {
+  # Scale the ASG down to 0
+  aws autoscaling update-auto-scaling-group \
+    --auto-scaling-group-name "${asg_name}" \
+    --min-size 0 --desired-capacity 0
+
+  # Grab the current instance IDs
+  ids="$(
+    aws autoscaling describe-auto-scaling-groups \
+      --auto-scaling-group-names "${asg_name}" \
+      --query 'AutoScalingGroups[0].Instances[*].InstanceId' \
+      --output text |
+      tr '\t' '\n'
+  )"
+
+  if [ -n "${ids}" ]; then
+    # shellcheck disable=SC2086
+    # Detach from ASG — this drops them from Instances[] immediately
+    aws autoscaling detach-instances \
+      --auto-scaling-group-name "${asg_name}" \
+      --instance-ids ${ids} \
+      --should-decrement-desired-capacity
+
+    # shellcheck disable=SC2086
+    # Now kill them at the EC2 layer
+    aws ec2 terminate-instances --instance-ids ${ids}
+  fi
+}
+
+wait_for_asg_to_be_empty() {
   log "Waiting for ASG to scale down."
   while :; do
     count="$(aws autoscaling describe-auto-scaling-groups \
@@ -52,22 +80,6 @@ wait_for_asg_empty() {
     sleep 10
   done
   log "  ASG is empty."
-}
-
-delete_consul_secrets() {
-  log "Deleting Consul Secrets Manager secrets."
-
-  for arn in "${bootstrap_token_secret_arn}" "${agent_token_secret_arn}"; do
-    if [ -z "${arn}" ]; then
-      continue
-    fi
-
-    aws secretsmanager delete-secret \
-      --secret-id "${arn}" \
-      --force-delete-without-recovery >/dev/null 2>&1 || true
-
-    log "  Deleted:" "${arn}"
-  done
 }
 
 delete_coordination_ssm_parameters() {
@@ -87,32 +99,38 @@ delete_coordination_ssm_parameters() {
   aws ssm delete-parameters --names ${names} >/dev/null
 }
 
+delete_bootstrap_token() {
+  log "Deleting bootstrap token."
+
+  secret_arn="$(
+    printf '%s\n' "${terraform_output}" |
+      jq -r '.consul_bootstrap_token_secret_arn.value // empty'
+  )"
+
+  if [ -z "${secret_arn}" ]; then
+    log "  No secret ARN found in outputs."
+    return 0
+  fi
+
+  aws secretsmanager delete-secret \
+    --secret-id "${secret_arn}" \
+    --force-delete-without-recovery >/dev/null 2>&1 || true
+
+  log "  Deleted:" "${secret_arn}"
+}
+
 main() {
   set -ef
 
+  # Get host IPs
   read_terraform_outputs
 
-  ## Scale the ASG down to 0
-  #aws autoscaling update-auto-scaling-group \
-  #  --auto-scaling-group-name "${asg_name}" \
-  #  --min-size 0 --desired-capacity 0
+  zero_out_tg_deregistration_delay
+  scale_asg_to_zero
+  wait_for_asg_to_be_empty
 
-  ## Grab the current instance IDs
-  #ids="$(
-  #  aws autoscaling describe-auto-scaling-groups \
-  #    --auto-scaling-group-names "${asg_name}" \
-  #    --query 'AutoScalingGroups[0].Instances[*].InstanceId' \
-  #    --output text |
-  #    tr '\t' '\n'
-  #)"
-
-  ## shellcheck disable=SC2086
-  ## Nuke them to speed up the scale down
-  #[ -n "${ids}" ] && aws ec2 terminate-instances --instance-ids ${ids}
-
-  #wait_for_asg_empty
-  #delete_consul_secrets
-  #delete_coordination_ssm_parameters
+  delete_coordination_ssm_parameters
+  delete_bootstrap_token
 }
 
 main "$@"

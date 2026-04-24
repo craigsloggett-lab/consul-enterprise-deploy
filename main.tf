@@ -1,3 +1,5 @@
+data "aws_region" "current" {}
+
 data "aws_vpc" "selected" {
   filter {
     name   = "tag:Name"
@@ -43,7 +45,7 @@ data "aws_ami" "selected" {
 
 module "consul" {
   # tflint-ignore: terraform_module_pinned_source
-  source = "git::https://github.com/craigsloggett/terraform-aws-consul-enterprise?ref=e11fbc8a297898a1e6da2a640c143dd0dadc1162"
+  source = "git::https://github.com/craigsloggett/terraform-aws-consul-enterprise?ref=ed2af264c3687b67fa7becd52c5697370dc9fedc"
 
   project_name              = var.project_name
   route53_zone              = data.aws_route53_zone.consul
@@ -60,4 +62,5 @@ module "consul" {
   nlb_internal                = var.nlb_internal
   consul_api_allowed_cidrs    = var.consul_api_allowed_cidrs
   consul_server_instance_type = var.consul_server_instance_type
+  consul_datacenter           = data.aws_region.current.region
 }
