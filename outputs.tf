@@ -49,11 +49,6 @@ output "consul_bootstrap_token_secret_arn" {
   value       = module.consul.bootstrap_token_secret.arn
 }
 
-output "consul_token_secret_arn" {
-  description = "ARN of the Secrets Manager secret containing the Consul ACL token for Nomad."
-  value       = module.consul.nomad_token_secret.arn
-}
-
 output "consul_security_group_id" {
   description = "ID of the Consul cluster security group."
   value       = module.consul.security_group.id
@@ -69,17 +64,3 @@ output "consul_datacenter" {
   value       = module.consul.datacenter
 }
 
-output "nomad_server_service_name" {
-  description = "Consul service name Nomad servers will register as."
-  value       = module.consul.nomad_server_service_name
-}
-
-output "nomad_client_service_name" {
-  description = "Consul service name Nomad clients will register as."
-  value       = module.consul.nomad_client_service_name
-}
-
-output "nomad_operator_snapshot_agent_service_name" {
-  description = "Consul service name the Nomad Operator Snapshot Agent will register as."
-  value       = module.consul.nomad_operator_snapshot_agent_service_name
-}
