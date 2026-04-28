@@ -45,7 +45,8 @@ data "aws_ami" "selected" {
 }
 
 module "consul" {
-  source = "../../craigsloggett/terraform-aws-consul-enterprise"
+  # tflint-ignore: terraform_module_pinned_source
+  source = "git::https://github.com/craigsloggett/terraform-aws-consul-enterprise?ref=dfcbf8c17acc3f9cbfeb3a073d5111e7a4c51bf9"
 
   project_name              = var.project_name
   route53_zone              = data.aws_route53_zone.consul
@@ -53,16 +54,10 @@ module "consul" {
   ec2_key_pair_name         = var.ec2_key_pair_name
   ec2_ami                   = data.aws_ami.selected
 
-  consul_gossip_key = random_id.gossip_key.b64_std
-
-  vault_address        = var.vault_address
-  vault_ca_cert_pem    = var.vault_ca_cert_pem
-  vault_aws_auth_role  = vault_aws_auth_backend_role.consul_server.role
-  vault_pki_mount_path = vault_mount.consul_int.path
-  vault_pki_role_name  = vault_pki_secret_backend_role.consul_server.name
-  vault_agent_version  = var.vault_agent_version
-
-  iam_role_name = local.consul_iam_role_name
+  consul_ca_cert_pem     = tls_self_signed_cert.consul_ca.cert_pem
+  consul_server_cert_pem = "${vault_pki_secret_backend_cert.consul_server.certificate}\n${vault_pki_secret_backend_cert.consul_server.issuing_ca}"
+  consul_server_key_pem  = vault_pki_secret_backend_cert.consul_server.private_key
+  consul_gossip_key      = random_id.gossip_key.b64_std
 
   existing_vpc = {
     vpc_id             = data.aws_vpc.selected.id

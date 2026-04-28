@@ -26,7 +26,7 @@ An infrastructure as code repository used to deploy a Consul Enterprise cluster 
 
 | Name | Source | Version |
 | ---- | ------ | ------- |
-| <a name="module_consul"></a> [consul](#module\_consul) | ../../craigsloggett/terraform-aws-consul-enterprise | n/a |
+| <a name="module_consul"></a> [consul](#module\_consul) | git::https://github.com/craigsloggett/terraform-aws-consul-enterprise | dfcbf8c17acc3f9cbfeb3a073d5111e7a4c51bf9 |
 
 ## Inputs
 
@@ -43,8 +43,6 @@ An infrastructure as code repository used to deploy a Consul Enterprise cluster 
 | <a name="input_route53_zone_name"></a> [route53\_zone\_name](#input\_route53\_zone\_name) | Name of the existing Route 53 hosted zone. | `string` | n/a | yes |
 | <a name="input_vault_address"></a> [vault\_address](#input\_vault\_address) | Address of the Vault cluster reachable from Consul nodes (e.g. https://vault.example.com:8200). | `string` | n/a | yes |
 | <a name="input_vault_admin_token"></a> [vault\_admin\_token](#input\_vault\_admin\_token) | Admin token for the Vault provider used by this deploy. | `string` | n/a | yes |
-| <a name="input_vault_agent_version"></a> [vault\_agent\_version](#input\_vault\_agent\_version) | Version of the Vault binary installed on each Consul node and run as Vault Agent. | `string` | n/a | yes |
-| <a name="input_vault_ca_cert_pem"></a> [vault\_ca\_cert\_pem](#input\_vault\_ca\_cert\_pem) | PEM CA bundle used by Vault Agent on each Consul node to verify the Vault TLS endpoint. | `string` | n/a | yes |
 | <a name="input_vpc_name"></a> [vpc\_name](#input\_vpc\_name) | Name tag of the existing VPC. | `string` | n/a | yes |
 
 ## Resources
@@ -57,6 +55,7 @@ An infrastructure as code repository used to deploy a Consul Enterprise cluster 
 | [tls_self_signed_cert.consul_ca](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/self_signed_cert) | resource |
 | [vault_aws_auth_backend_role.consul_server](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/resources/aws_auth_backend_role) | resource |
 | [vault_mount.consul_int](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/resources/mount) | resource |
+| [vault_pki_secret_backend_cert.consul_server](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/resources/pki_secret_backend_cert) | resource |
 | [vault_pki_secret_backend_config_urls.consul_int](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/resources/pki_secret_backend_config_urls) | resource |
 | [vault_pki_secret_backend_intermediate_cert_request.consul_int](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/resources/pki_secret_backend_intermediate_cert_request) | resource |
 | [vault_pki_secret_backend_intermediate_set_signed.consul_int](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/resources/pki_secret_backend_intermediate_set_signed) | resource |

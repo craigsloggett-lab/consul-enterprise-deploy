@@ -1,9 +1,9 @@
 resource "vault_mount" "consul_int" {
-  path                      = "pki_consul_int"
+  path                      = "pki_consul"
   type                      = "pki"
   default_lease_ttl_seconds = 86400    # 1 day
   max_lease_ttl_seconds     = 31536000 # 1 year
-  description               = "Consul cluster intermediate CA"
+  description               = "Consul Intermediate CA"
 }
 
 resource "vault_pki_secret_backend_intermediate_cert_request" "consul_int" {
