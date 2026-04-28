@@ -51,3 +51,8 @@ variable "consul_server_instance_type" {
   description = "EC2 instance type for Consul server nodes."
   default     = "m5.large"
 }
+
+variable "vault_iam_role_name" {
+  type        = string
+  description = "Name of the Vault server IAM role. Sourced from the vault-enterprise-deploy workspace's `vault_iam_role_name` output."
+}

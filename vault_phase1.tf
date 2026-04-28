@@ -4,7 +4,7 @@ resource "vault_pki_secret_backend_role" "consul_server" {
 
   allowed_domains = [
     "server.${data.aws_region.current.region}.consul",
-    "*.${var.route53_zone_name}",
+    var.route53_zone_name,
     "localhost",
   ]
   allow_subdomains   = true
@@ -41,4 +41,25 @@ resource "vault_policy" "consul_server_base" {
       capabilities = ["update"]
     }
   EOT
+}
+
+# Allow Vault to resolve the Consul server IAM role ARN during AWS auth.
+
+data "aws_iam_role" "vault" {
+  name = var.vault_iam_role_name
+}
+
+data "aws_iam_policy_document" "vault_iam_read_consul" {
+  statement {
+    sid       = "ResolveConsulIAMRoleARN"
+    effect    = "Allow"
+    actions   = ["iam:GetRole"]
+    resources = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.consul_iam_role_name}"]
+  }
+}
+
+resource "aws_iam_role_policy" "vault_iam_read_consul" {
+  name_prefix = "${var.project_name}-vault-iam-read-consul-"
+  role        = data.aws_iam_role.vault.id
+  policy      = data.aws_iam_policy_document.vault_iam_read_consul.json
 }
