@@ -1,4 +1,5 @@
 data "aws_region" "current" {}
+data "aws_caller_identity" "current" {}
 
 data "aws_vpc" "selected" {
   filter {
@@ -52,10 +53,16 @@ module "consul" {
   ec2_key_pair_name         = var.ec2_key_pair_name
   ec2_ami                   = data.aws_ami.selected
 
-  consul_ca_cert_pem     = tls_self_signed_cert.consul_ca.cert_pem
-  consul_server_cert_pem = tls_locally_signed_cert.consul_server.cert_pem
-  consul_server_key_pem  = tls_private_key.consul_server.private_key_pem
-  consul_gossip_key      = random_id.gossip_key.b64_std
+  consul_gossip_key = random_id.gossip_key.b64_std
+
+  vault_address        = var.vault_address
+  vault_ca_cert_pem    = var.vault_ca_cert_pem
+  vault_aws_auth_role  = vault_aws_auth_backend_role.consul_server.role
+  vault_pki_mount_path = vault_mount.consul_int.path
+  vault_pki_role_name  = vault_pki_secret_backend_role.consul_server.name
+  vault_agent_version  = var.vault_agent_version
+
+  iam_role_name = local.consul_iam_role_name
 
   existing_vpc = {
     vpc_id             = data.aws_vpc.selected.id

@@ -51,3 +51,25 @@ variable "consul_server_instance_type" {
   description = "EC2 instance type for Consul server nodes."
   default     = "m5.large"
 }
+
+variable "vault_address" {
+  type        = string
+  description = "Address of the Vault cluster reachable from Consul nodes (e.g. https://vault.example.com:8200)."
+}
+
+variable "vault_admin_token" {
+  type        = string
+  description = "Admin token for the Vault provider used by this deploy."
+  sensitive   = true
+}
+
+variable "vault_ca_cert_pem" {
+  type        = string
+  description = "PEM CA bundle used by Vault Agent on each Consul node to verify the Vault TLS endpoint."
+  sensitive   = true
+}
+
+variable "vault_agent_version" {
+  type        = string
+  description = "Version of the Vault binary installed on each Consul node and run as Vault Agent."
+}

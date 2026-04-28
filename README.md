@@ -11,6 +11,7 @@ An infrastructure as code repository used to deploy a Consul Enterprise cluster 
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 6.0 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | ~> 3.0 |
 | <a name="requirement_tls"></a> [tls](#requirement\_tls) | ~> 4.0 |
+| <a name="requirement_vault"></a> [vault](#requirement\_vault) | ~> 4.0 |
 
 ## Providers
 
@@ -19,6 +20,7 @@ An infrastructure as code repository used to deploy a Consul Enterprise cluster 
 | <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 6.0 |
 | <a name="provider_random"></a> [random](#provider\_random) | ~> 3.0 |
 | <a name="provider_tls"></a> [tls](#provider\_tls) | ~> 4.0 |
+| <a name="provider_vault"></a> [vault](#provider\_vault) | ~> 4.0 |
 
 ## Modules
 
@@ -39,6 +41,10 @@ An infrastructure as code repository used to deploy a Consul Enterprise cluster 
 | <a name="input_nlb_internal"></a> [nlb\_internal](#input\_nlb\_internal) | Whether the NLB is internal. | `bool` | `true` | no |
 | <a name="input_project_name"></a> [project\_name](#input\_project\_name) | Name prefix for all resources. | `string` | n/a | yes |
 | <a name="input_route53_zone_name"></a> [route53\_zone\_name](#input\_route53\_zone\_name) | Name of the existing Route 53 hosted zone. | `string` | n/a | yes |
+| <a name="input_vault_address"></a> [vault\_address](#input\_vault\_address) | Address of the Vault cluster reachable from Consul nodes (e.g. https://vault.example.com:8200). | `string` | n/a | yes |
+| <a name="input_vault_admin_token"></a> [vault\_admin\_token](#input\_vault\_admin\_token) | Admin token for the Vault provider used by this deploy. | `string` | n/a | yes |
+| <a name="input_vault_agent_version"></a> [vault\_agent\_version](#input\_vault\_agent\_version) | Version of the Vault binary installed on each Consul node and run as Vault Agent. | `string` | n/a | yes |
+| <a name="input_vault_ca_cert_pem"></a> [vault\_ca\_cert\_pem](#input\_vault\_ca\_cert\_pem) | PEM CA bundle used by Vault Agent on each Consul node to verify the Vault TLS endpoint. | `string` | n/a | yes |
 | <a name="input_vpc_name"></a> [vpc\_name](#input\_vpc\_name) | Name tag of the existing VPC. | `string` | n/a | yes |
 
 ## Resources
@@ -46,12 +52,18 @@ An infrastructure as code repository used to deploy a Consul Enterprise cluster 
 | Name | Type |
 | ---- | ---- |
 | [random_id.gossip_key](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) | resource |
-| [tls_cert_request.consul_server](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/cert_request) | resource |
-| [tls_locally_signed_cert.consul_server](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/locally_signed_cert) | resource |
+| [tls_locally_signed_cert.consul_int](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/locally_signed_cert) | resource |
 | [tls_private_key.consul_ca](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/private_key) | resource |
-| [tls_private_key.consul_server](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/private_key) | resource |
 | [tls_self_signed_cert.consul_ca](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/self_signed_cert) | resource |
+| [vault_aws_auth_backend_role.consul_server](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/resources/aws_auth_backend_role) | resource |
+| [vault_mount.consul_int](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/resources/mount) | resource |
+| [vault_pki_secret_backend_config_urls.consul_int](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/resources/pki_secret_backend_config_urls) | resource |
+| [vault_pki_secret_backend_intermediate_cert_request.consul_int](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/resources/pki_secret_backend_intermediate_cert_request) | resource |
+| [vault_pki_secret_backend_intermediate_set_signed.consul_int](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/resources/pki_secret_backend_intermediate_set_signed) | resource |
+| [vault_pki_secret_backend_role.consul_server](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/resources/pki_secret_backend_role) | resource |
+| [vault_policy.consul_server_base](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/resources/policy) | resource |
 | [aws_ami.selected](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
+| [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 | [aws_route53_zone.consul](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/route53_zone) | data source |
 | [aws_subnets.private](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnets) | data source |
