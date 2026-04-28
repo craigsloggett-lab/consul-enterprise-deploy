@@ -41,8 +41,6 @@ An infrastructure as code repository used to deploy a Consul Enterprise cluster 
 | <a name="input_nlb_internal"></a> [nlb\_internal](#input\_nlb\_internal) | Whether the NLB is internal. | `bool` | `true` | no |
 | <a name="input_project_name"></a> [project\_name](#input\_project\_name) | Name prefix for all resources. | `string` | n/a | yes |
 | <a name="input_route53_zone_name"></a> [route53\_zone\_name](#input\_route53\_zone\_name) | Name of the existing Route 53 hosted zone. | `string` | n/a | yes |
-| <a name="input_vault_address"></a> [vault\_address](#input\_vault\_address) | Address of the Vault cluster reachable from Consul nodes (e.g. https://vault.example.com:8200). | `string` | n/a | yes |
-| <a name="input_vault_admin_token"></a> [vault\_admin\_token](#input\_vault\_admin\_token) | Admin token for the Vault provider used by this deploy. | `string` | n/a | yes |
 | <a name="input_vpc_name"></a> [vpc\_name](#input\_vpc\_name) | Name tag of the existing VPC. | `string` | n/a | yes |
 
 ## Resources

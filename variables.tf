@@ -51,14 +51,3 @@ variable "consul_server_instance_type" {
   description = "EC2 instance type for Consul server nodes."
   default     = "m5.large"
 }
-
-variable "vault_address" {
-  type        = string
-  description = "Address of the Vault cluster reachable from Consul nodes (e.g. https://vault.example.com:8200)."
-}
-
-variable "vault_admin_token" {
-  type        = string
-  description = "Admin token for the Vault provider used by this deploy."
-  sensitive   = true
-}

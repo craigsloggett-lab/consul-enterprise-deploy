@@ -35,6 +35,6 @@ resource "vault_pki_secret_backend_intermediate_set_signed" "consul_int" {
 
 resource "vault_pki_secret_backend_config_urls" "consul_int" {
   backend                 = vault_mount.consul_int.path
-  issuing_certificates    = ["${var.vault_address}/v1/${vault_mount.consul_int.path}/ca"]
-  crl_distribution_points = ["${var.vault_address}/v1/${vault_mount.consul_int.path}/crl"]
+  issuing_certificates    = ["${local.vault_address}/v1/${vault_mount.consul_int.path}/ca"]
+  crl_distribution_points = ["${local.vault_address}/v1/${vault_mount.consul_int.path}/crl"]
 }
