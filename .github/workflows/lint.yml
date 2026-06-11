@@ -26,6 +26,16 @@ jobs:
       - name: Lint YAML Files
         uses: craigsloggett/lint-yaml@7bb419d1e6e00fa57c5a15c4ed68ab22a2211d4e # v1.0.14
 
+  shellcheck:
+    name: Shell
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Lint Shell Scripts
+        uses: craigsloggett/lint-shell@92d33c5528427fc13f2883aff90cb7439e3cb56d # v1.0.1
+
   terraform:
     name: Terraform
     runs-on: ubuntu-24.04
@@ -35,9 +45,6 @@ jobs:
 
       - name: Lint Terraform Configuration
         uses: craigsloggett/lint-terraform@4259f844b04cf95ede641b0b6cb1ba06daf71b73 # v1.1.4
-        with: # Remove if not using a private module registry.
-          hcp-terraform-hostname: app.terraform.io
-          hcp-terraform-api-token: ${{ secrets.TF_TOKEN_APP_TERRAFORM_IO }}
 
   terraform-docs:
     name: Terraform Docs
