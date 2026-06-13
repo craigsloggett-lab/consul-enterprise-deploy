@@ -22,20 +22,21 @@ resource "vault_pki_secret_backend_role" "consul_server" {
   depends_on = [vault_pki_secret_backend_intermediate_set_signed.consul_int]
 }
 
+# Bind this deployment's Consul server IAM role to a Vault AWS IAM auth role,
+# mirroring the vault-enterprise module's own auth role (auth_type iam, bound by
+# principal ARN). resolve_aws_unique_ids is false so Vault matches the role ARN
+# directly and never calls iam:GetRole on it; doing so would require granting the
+# external Vault cluster's own server role permission over this deployment's
+# role, coupling the two deployments.
 resource "vault_aws_auth_backend_role" "consul_server" {
   backend                  = "aws"
   role                     = "consul-server"
   auth_type                = "iam"
-  bound_iam_principal_arns = [module.consul.iam_role_arn]
-  resolve_aws_unique_ids   = true
+  bound_iam_principal_arns = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.consul_iam_role_name}"]
+  resolve_aws_unique_ids   = false
   token_policies           = [vault_policy.consul_server_base.name]
   token_ttl                = 3600
   token_max_ttl            = 14400
-
-  # The module creates the bound IAM role, and Vault needs the iam:GetRole grant
-  # to resolve it, so this role is created after both (the module reference above
-  # orders it after the role; depends_on orders it after the grant).
-  depends_on = [aws_iam_role_policy.vault_iam_read_consul]
 }
 
 resource "vault_policy" "consul_server_base" {
@@ -50,25 +51,4 @@ resource "vault_policy" "consul_server_base" {
       capabilities = ["read"]
     }
   EOT
-}
-
-# Allow Vault to resolve the Consul server IAM role ARN during AWS auth.
-
-data "aws_iam_role" "vault" {
-  name = var.vault_iam_role_name
-}
-
-data "aws_iam_policy_document" "vault_iam_read_consul" {
-  statement {
-    sid       = "ResolveConsulIAMRoleARN"
-    effect    = "Allow"
-    actions   = ["iam:GetRole"]
-    resources = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.consul_iam_role_name}"]
-  }
-}
-
-resource "aws_iam_role_policy" "vault_iam_read_consul" {
-  name_prefix = "${var.project_name}-vault-iam-read-consul-"
-  role        = data.aws_iam_role.vault.id
-  policy      = data.aws_iam_policy_document.vault_iam_read_consul.json
 }

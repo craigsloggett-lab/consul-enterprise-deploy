@@ -12,9 +12,5 @@ consul_api_allowed_cidrs = ["0.0.0.0/0"]
 consul_server_instance_type = "m5.large"
 
 # Read from the vault-enterprise-deploy workspace:
-#   terraform output -raw vault_iam_role_name
-vault_iam_role_name = "lab-vault-..."
-
-# Read from the vault-enterprise-deploy workspace:
 #   terraform output -raw vault_pki_ca_chain_ssm_parameter_name
-vault_pki_ca_chain_ssm_parameter_name = "/lab/vault/pki/ca-chain"
+vault_pki_ca_chain_ssm_parameter_name = "/vault-enterprise/pki/ca-chain"
