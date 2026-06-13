@@ -42,6 +42,7 @@ An infrastructure as code repository used to deploy a Consul Enterprise cluster 
 | <a name="input_project_name"></a> [project\_name](#input\_project\_name) | Name prefix for all resources. | `string` | n/a | yes |
 | <a name="input_route53_zone_name"></a> [route53\_zone\_name](#input\_route53\_zone\_name) | Name of the existing Route 53 hosted zone. | `string` | n/a | yes |
 | <a name="input_vault_iam_role_name"></a> [vault\_iam\_role\_name](#input\_vault\_iam\_role\_name) | Name of the Vault server IAM role. Sourced from the vault-enterprise-deploy workspace's `vault_iam_role_name` output. | `string` | n/a | yes |
+| <a name="input_vault_pki_ca_chain_ssm_parameter_name"></a> [vault\_pki\_ca\_chain\_ssm\_parameter\_name](#input\_vault\_pki\_ca\_chain\_ssm\_parameter\_name) | SSM parameter name holding the external Vault PKI CA chain PEM, used by the Consul nodes' Vault Agents to trust the Vault server. Sourced from the vault-enterprise-deploy workspace's `vault_pki_ca_chain_ssm_parameter_name` output. | `string` | n/a | yes |
 | <a name="input_vpc_name"></a> [vpc\_name](#input\_vpc\_name) | Name tag of the existing VPC. | `string` | n/a | yes |
 
 ## Resources
@@ -54,19 +55,20 @@ An infrastructure as code repository used to deploy a Consul Enterprise cluster 
 | [tls_private_key.consul_ca](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/private_key) | resource |
 | [tls_self_signed_cert.consul_ca](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/self_signed_cert) | resource |
 | [vault_aws_auth_backend_role.consul_server](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/resources/aws_auth_backend_role) | resource |
+| [vault_kv_secret_v2.consul_gossip](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/resources/kv_secret_v2) | resource |
 | [vault_mount.consul_int](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/resources/mount) | resource |
-| [vault_pki_secret_backend_cert.consul_server](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/resources/pki_secret_backend_cert) | resource |
+| [vault_mount.consul_kv](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/resources/mount) | resource |
 | [vault_pki_secret_backend_config_urls.consul_int](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/resources/pki_secret_backend_config_urls) | resource |
 | [vault_pki_secret_backend_intermediate_cert_request.consul_int](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/resources/pki_secret_backend_intermediate_cert_request) | resource |
 | [vault_pki_secret_backend_intermediate_set_signed.consul_int](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/resources/pki_secret_backend_intermediate_set_signed) | resource |
 | [vault_pki_secret_backend_role.consul_server](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/resources/pki_secret_backend_role) | resource |
 | [vault_policy.consul_server_base](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/resources/policy) | resource |
-| [aws_ami.selected](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
 | [aws_iam_policy_document.vault_iam_read_consul](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_role.vault](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_role) | data source |
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 | [aws_route53_zone.consul](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/route53_zone) | data source |
+| [aws_ssm_parameter.vault_ca_chain](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ssm_parameter) | data source |
 | [aws_subnets.private](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnets) | data source |
 | [aws_subnets.public](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnets) | data source |
 | [aws_vpc.selected](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/vpc) | data source |
@@ -75,16 +77,17 @@ An infrastructure as code repository used to deploy a Consul Enterprise cluster 
 
 | Name | Description |
 | ---- | ----------- |
+| <a name="output_acl_management_token_secret_arn"></a> [acl\_management\_token\_secret\_arn](#output\_acl\_management\_token\_secret\_arn) | Secrets Manager ARN holding the Consul ACL management token. |
 | <a name="output_bastion_public_ip"></a> [bastion\_public\_ip](#output\_bastion\_public\_ip) | Public IP of the bastion host. |
+| <a name="output_bootstrap_consul_cluster_state_ssm_parameter_name"></a> [bootstrap\_consul\_cluster\_state\_ssm\_parameter\_name](#output\_bootstrap\_consul\_cluster\_state\_ssm\_parameter\_name) | SSM parameter for the bootstrap initialization state flag. |
+| <a name="output_bootstrap_consul_pki_ca_chain_ssm_parameter_name"></a> [bootstrap\_consul\_pki\_ca\_chain\_ssm\_parameter\_name](#output\_bootstrap\_consul\_pki\_ca\_chain\_ssm\_parameter\_name) | SSM parameter holding the PEM CA chain that signs the Consul server certificates. |
+| <a name="output_bootstrap_instance_id_ssm_parameter_name"></a> [bootstrap\_instance\_id\_ssm\_parameter\_name](#output\_bootstrap\_instance\_id\_ssm\_parameter\_name) | SSM parameter for the elected bootstrap node EC2 instance ID. |
 | <a name="output_consul_asg_name"></a> [consul\_asg\_name](#output\_consul\_asg\_name) | Name of the Consul Auto Scaling Group. |
-| <a name="output_consul_auto_join_ec2_tag"></a> [consul\_auto\_join\_ec2\_tag](#output\_consul\_auto\_join\_ec2\_tag) | EC2 tag key and value used for Consul auto-join. |
-| <a name="output_consul_bootstrap_token_secret_arn"></a> [consul\_bootstrap\_token\_secret\_arn](#output\_consul\_bootstrap\_token\_secret\_arn) | ARN of the Secrets Manager secret containing the Consul ACL bootstrap token. |
 | <a name="output_consul_datacenter"></a> [consul\_datacenter](#output\_consul\_datacenter) | Consul datacenter name. |
-| <a name="output_consul_gossip_key_secret_arn"></a> [consul\_gossip\_key\_secret\_arn](#output\_consul\_gossip\_key\_secret\_arn) | ARN of the Secrets Manager secret containing the Consul gossip encryption key. |
-| <a name="output_consul_security_group_id"></a> [consul\_security\_group\_id](#output\_consul\_security\_group\_id) | ID of the Consul cluster security group. |
 | <a name="output_consul_snapshots_bucket"></a> [consul\_snapshots\_bucket](#output\_consul\_snapshots\_bucket) | S3 bucket for Consul snapshots. |
-| <a name="output_consul_target_group_arn"></a> [consul\_target\_group\_arn](#output\_consul\_target\_group\_arn) | ARN of the Consul NLB target group. |
-| <a name="output_consul_url"></a> [consul\_url](#output\_consul\_url) | URL of the Consul cluster. |
+| <a name="output_consul_url"></a> [consul\_url](#output\_consul\_url) | URL of the Consul Enterprise cluster. |
 | <a name="output_consul_version"></a> [consul\_version](#output\_consul\_version) | Consul Enterprise version deployed. |
 | <a name="output_ec2_ami_name"></a> [ec2\_ami\_name](#output\_ec2\_ami\_name) | Name of the AMI used for EC2 instances. |
+| <a name="output_iam_role_arn"></a> [iam\_role\_arn](#output\_iam\_role\_arn) | ARN of the Consul server IAM role bound to the external Vault AWS auth role. |
+| <a name="output_nlb_dns_name"></a> [nlb\_dns\_name](#output\_nlb\_dns\_name) | AWS-assigned DNS name of the Consul NLB. |
 <!-- END_TF_DOCS -->

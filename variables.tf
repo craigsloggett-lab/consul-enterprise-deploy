@@ -56,3 +56,8 @@ variable "vault_iam_role_name" {
   type        = string
   description = "Name of the Vault server IAM role. Sourced from the vault-enterprise-deploy workspace's `vault_iam_role_name` output."
 }
+
+variable "vault_pki_ca_chain_ssm_parameter_name" {
+  type        = string
+  description = "SSM parameter name holding the external Vault PKI CA chain PEM, used by the Consul nodes' Vault Agents to trust the Vault server. Sourced from the vault-enterprise-deploy workspace's `vault_pki_ca_chain_ssm_parameter_name` output."
+}

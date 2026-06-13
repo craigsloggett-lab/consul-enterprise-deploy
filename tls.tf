@@ -1,4 +1,7 @@
 # Self-Signed CA
+#
+# Anchors the `pki_consul` intermediate the module's Vault Agents issue Consul
+# server certificates from at runtime.
 
 resource "tls_private_key" "consul_ca" {
   algorithm   = "ECDSA"
@@ -19,26 +22,4 @@ resource "tls_self_signed_cert" "consul_ca" {
     "cert_signing",
     "crl_signing",
   ]
-}
-
-# Gossip Encryption Key
-
-resource "random_id" "gossip_key" {
-  byte_length = 32
-}
-
-# Consul Server Certificate (issued by Vault PKI intermediate)
-
-resource "vault_pki_secret_backend_cert" "consul_server" {
-  backend     = vault_mount.consul_int.path
-  name        = vault_pki_secret_backend_role.consul_server.name
-  common_name = "consul.${var.route53_zone_name}"
-
-  alt_names = [
-    "server.${data.aws_region.current.region}.consul",
-    "consul.${var.route53_zone_name}",
-    "localhost",
-  ]
-
-  ip_sans = ["127.0.0.1"]
 }

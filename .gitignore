@@ -29,5 +29,8 @@ override.tf.json
 .terraformrc
 terraform.rc
 
+# Local environment file sourced by make logs / make replace-node
+scripts/environment.sh
+
 # Sensitive initialization output
 consul-init.json

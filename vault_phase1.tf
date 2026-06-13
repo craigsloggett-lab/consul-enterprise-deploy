@@ -26,11 +26,16 @@ resource "vault_aws_auth_backend_role" "consul_server" {
   backend                  = "aws"
   role                     = "consul-server"
   auth_type                = "iam"
-  bound_iam_principal_arns = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${local.consul_iam_role_name}"]
+  bound_iam_principal_arns = [module.consul.iam_role_arn]
   resolve_aws_unique_ids   = true
   token_policies           = [vault_policy.consul_server_base.name]
   token_ttl                = 3600
   token_max_ttl            = 14400
+
+  # The module creates the bound IAM role, and Vault needs the iam:GetRole grant
+  # to resolve it, so this role is created after both (the module reference above
+  # orders it after the role; depends_on orders it after the grant).
+  depends_on = [aws_iam_role_policy.vault_iam_read_consul]
 }
 
 resource "vault_policy" "consul_server_base" {
@@ -39,6 +44,10 @@ resource "vault_policy" "consul_server_base" {
   policy = <<-EOT
     path "${vault_mount.consul_int.path}/issue/${vault_pki_secret_backend_role.consul_server.name}" {
       capabilities = ["update"]
+    }
+
+    path "${vault_mount.consul_kv.path}/data/${vault_kv_secret_v2.consul_gossip.name}" {
+      capabilities = ["read"]
     }
   EOT
 }

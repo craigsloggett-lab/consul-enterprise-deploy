@@ -34,39 +34,95 @@ data "aws_route53_zone" "consul" {
   name = var.route53_zone_name
 }
 
-data "aws_ami" "selected" {
-  most_recent = true
-  owners      = [var.ec2_ami_owner]
-
-  filter {
-    name   = "name"
-    values = [var.ec2_ami_name]
-  }
+# The external Vault cluster signs its own server certificate from its PKI; the
+# Vault Agents on the Consul nodes need that CA chain to trust it. It is published
+# to SSM by the vault-enterprise-deploy workspace.
+data "aws_ssm_parameter" "vault_ca_chain" {
+  name = var.vault_pki_ca_chain_ssm_parameter_name
 }
 
 module "consul" {
   # tflint-ignore: terraform_module_pinned_source
-  source = "git::https://github.com/craigsloggett/terraform-aws-consul-enterprise?ref=b35dd8f564164360fc85ce8d80174320a8e031e6"
+  source = "git::https://github.com/craigsloggett/terraform-aws-consul-enterprise?ref=c921de2d8d5fd782725b432ea15a8650cc4e58f5"
 
-  project_name              = var.project_name
-  route53_zone              = data.aws_route53_zone.consul
   consul_enterprise_license = var.consul_enterprise_license
-  ec2_key_pair_name         = var.ec2_key_pair_name
-  ec2_ami                   = data.aws_ami.selected
+  consul_fqdn               = "consul.${var.route53_zone_name}"
 
-  consul_ca_cert_pem     = tls_self_signed_cert.consul_ca.cert_pem
-  consul_server_cert_pem = "${vault_pki_secret_backend_cert.consul_server.certificate}\n${vault_pki_secret_backend_cert.consul_server.issuing_ca}"
-  consul_server_key_pem  = vault_pki_secret_backend_cert.consul_server.private_key
-  consul_gossip_key      = random_id.gossip_key.b64_std
+  external_vault = {
+    address      = local.vault_address
+    port         = 443
+    ca_chain_pem = data.aws_ssm_parameter.vault_ca_chain.value
 
-  existing_vpc = {
-    vpc_id             = data.aws_vpc.selected.id
-    private_subnet_ids = data.aws_subnets.private.ids
-    public_subnet_ids  = data.aws_subnets.public.ids
+    # The auth role is configured in vault_phase1.tf. It is referenced by name
+    # rather than resource attribute to avoid a dependency cycle (that role binds
+    # to this module's IAM role); the Vault Agents authenticate against it at
+    # runtime once the apply has created it.
+    auth_aws = {
+      mount_path = "aws"
+      role_name  = "consul-server"
+    }
+
+    pki = {
+      mount_path = vault_mount.consul_int.path
+      role_name  = vault_pki_secret_backend_role.consul_server.name
+    }
+
+    kv = {
+      mount_path         = vault_mount.consul_kv.path
+      gossip_secret_path = vault_kv_secret_v2.consul_gossip.name
+      gossip_key_field   = "key"
+    }
   }
 
-  nlb_internal                = var.nlb_internal
-  consul_api_allowed_cidrs    = var.consul_api_allowed_cidrs
-  consul_server_instance_type = var.consul_server_instance_type
-  consul_datacenter           = data.aws_region.current.region
+  route53_zone = data.aws_route53_zone.consul
+
+  # The PKI role only permits server.<datacenter>.consul when the datacenter is
+  # the region, so keep them aligned.
+  consul = {
+    datacenter = data.aws_region.current.region
+  }
+
+  # m5.large cannot sustain the module's default provisioned IOPS/throughput, so
+  # hold the data and audit volumes at the gp3 floor.
+  compute = {
+    instance_type = var.consul_server_instance_type
+
+    raft_data_disk = {
+      iops       = 3000
+      throughput = 125
+    }
+
+    audit_disk = {
+      iops       = 3000
+      throughput = 125
+    }
+  }
+
+  # Match the IAM role name the AWS auth role in vault_phase1.tf is bound to.
+  iam_role = {
+    name = local.consul_iam_role_name
+  }
+
+  key_pair = {
+    key_name = var.ec2_key_pair_name
+  }
+
+  ami = {
+    owners = [var.ec2_ami_owner]
+    name   = var.ec2_ami_name
+  }
+
+  vpc = {
+    existing = {
+      vpc_id             = data.aws_vpc.selected.id
+      private_subnet_ids = data.aws_subnets.private.ids
+      public_subnet_ids  = data.aws_subnets.public.ids
+    }
+  }
+
+  nlb = {
+    internal            = var.nlb_internal
+    api_allowed_cidrs   = var.consul_api_allowed_cidrs
+    deletion_protection = false
+  }
 }
