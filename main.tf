@@ -68,7 +68,7 @@ module "consul" {
     }
 
     kv = {
-      mount_path         = vault_mount.consul_kv.path
+      mount_path         = vault_mount.kv.path
       gossip_secret_path = vault_kv_secret_v2.consul_gossip.name
       gossip_key_field   = "key"
     }

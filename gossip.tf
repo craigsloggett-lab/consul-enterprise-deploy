@@ -10,14 +10,14 @@ resource "random_id" "gossip_key" {
   byte_length = 32
 }
 
-resource "vault_mount" "consul_kv" {
+resource "vault_mount" "kv" {
   path        = "secret"
   type        = "kv-v2"
   description = "Consul gossip encryption key"
 }
 
 resource "vault_kv_secret_v2" "consul_gossip" {
-  mount = vault_mount.consul_kv.path
+  mount = vault_mount.kv.path
   name  = "consul/gossip"
 
   data_json = jsonencode({

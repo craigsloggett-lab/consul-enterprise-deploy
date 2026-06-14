@@ -47,7 +47,7 @@ resource "vault_policy" "consul_server_base" {
       capabilities = ["update"]
     }
 
-    path "${vault_mount.consul_kv.path}/data/${vault_kv_secret_v2.consul_gossip.name}" {
+    path "${vault_mount.kv.path}/data/${vault_kv_secret_v2.consul_gossip.name}" {
       capabilities = ["read"]
     }
   EOT

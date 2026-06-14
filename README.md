@@ -55,7 +55,7 @@ An infrastructure as code repository used to deploy a Consul Enterprise cluster 
 | [vault_aws_auth_backend_role.consul_server](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/resources/aws_auth_backend_role) | resource |
 | [vault_kv_secret_v2.consul_gossip](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/resources/kv_secret_v2) | resource |
 | [vault_mount.consul_int](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/resources/mount) | resource |
-| [vault_mount.consul_kv](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/resources/mount) | resource |
+| [vault_mount.kv](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/resources/mount) | resource |
 | [vault_pki_secret_backend_config_urls.consul_int](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/resources/pki_secret_backend_config_urls) | resource |
 | [vault_pki_secret_backend_intermediate_cert_request.consul_int](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/resources/pki_secret_backend_intermediate_cert_request) | resource |
 | [vault_pki_secret_backend_intermediate_set_signed.consul_int](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/resources/pki_secret_backend_intermediate_set_signed) | resource |
