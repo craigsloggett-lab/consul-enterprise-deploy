@@ -106,12 +106,12 @@ delete_coordination_ssm_parameters() {
   aws ssm delete-parameters --names ${names} >/dev/null
 }
 
-delete_bootstrap_token() {
-  log "Deleting bootstrap token."
+delete_management_token() {
+  log "Deleting the ACL management token."
 
   secret_arn="$(
     printf '%s\n' "${terraform_output}" |
-      jq -r '.consul_bootstrap_token_secret_arn.value // empty'
+      jq -r '.acl_management_token_secret_arn.value // empty'
   )"
 
   if [ -z "${secret_arn}" ]; then
@@ -129,7 +129,6 @@ delete_bootstrap_token() {
 main() {
   set -ef
 
-  # Get host IPs
   read_terraform_outputs
 
   zero_out_tg_deregistration_delay
@@ -137,7 +136,7 @@ main() {
   wait_for_asg_to_be_empty
 
   delete_coordination_ssm_parameters
-  delete_bootstrap_token
+  delete_management_token
 }
 
 main "$@"
