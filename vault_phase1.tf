@@ -15,8 +15,8 @@ resource "vault_pki_secret_backend_role" "consul_server" {
   client_flag        = true
   key_type           = "ec"
   key_bits           = 384
-  max_ttl            = "720h" # 30 days
-  ttl                = "168h" # 7 days
+  max_ttl            = "2592000" # 720h / 30 days
+  ttl                = "604800"  # 168h / 7 days
   no_store           = true
 
   depends_on = [vault_pki_secret_backend_intermediate_set_signed.consul_int]
