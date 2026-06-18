@@ -5,7 +5,7 @@ COMMIT_MSG  ?= Validate recent module changes
 .PHONY: help
 .PHONY: bump latest
 .PHONY: init validate fmt lint docs check plan
-.PHONY: stage commit push ship iterate logs replace-node
+.PHONY: stage commit push ship iterate logs cluster-logs cluster-startup-logs replace-node
 .PHONY: cycle update
 
 help:
@@ -21,17 +21,19 @@ help:
 	@printf '%s\n' "  make update              latest + check + ship"
 	@printf '\n'
 	@printf '%s\n' "Individual steps:"
-	@printf '%s\n' "  init      terraform init -upgrade"
-	@printf '%s\n' "  validate  terraform validate"
-	@printf '%s\n' "  fmt       terraform fmt --recursive"
-	@printf '%s\n' "  lint      tflint --recursive --format=compact"
-	@printf '%s\n' "  docs      terraform-docs ."
-	@printf '%s\n' "  plan      terraform plan"
-	@printf '%s\n' "  stage     git add ."
-	@printf '%s\n' "  commit    git commit -m '\$$(COMMIT_MSG)'"
-	@printf '%s\n' "  push      git push"
-	@printf '%s\n' "  iterate   ./scripts/iterate-development.sh"
-	@printf '%s\n' "  logs      source scripts/environment.sh, then get-cloud-init-logs.sh"
+	@printf '%s\n' "  init                  terraform init -upgrade"
+	@printf '%s\n' "  validate              terraform validate"
+	@printf '%s\n' "  fmt                   terraform fmt --recursive"
+	@printf '%s\n' "  lint                  tflint --recursive --format=compact"
+	@printf '%s\n' "  docs                  terraform-docs ."
+	@printf '%s\n' "  plan                  terraform plan"
+	@printf '%s\n' "  stage                 git add ."
+	@printf '%s\n' "  commit                git commit -m '\$$(COMMIT_MSG)'"
+	@printf '%s\n' "  push                  git push"
+	@printf '%s\n' "  iterate               ./scripts/iterate-development.sh"
+	@printf '%s\n' "  logs                  cloud-init logs      (get-cloud-init-logs.sh)"
+	@printf '%s\n' "  cluster-logs          Consul agent logs    (get-cluster-logs.sh)"
+	@printf '%s\n' "  cluster-startup-logs  Consul startup logs  (get-cluster-startup-logs.sh)"
 	@printf '\n'
 	@printf '%s\n' "Tests:"
 	@printf '%s\n' "  replace-node  Terminate a follower, verify the replacement rejoins raft and gets a PKI cert"
@@ -104,6 +106,24 @@ logs:
 	fi
 	@. ./scripts/environment.sh && \
 	scripts/get-cloud-init-logs.sh
+
+cluster-logs:
+	@if [ ! -f scripts/environment.sh ]; then \
+		printf '%s\n' "Error: scripts/environment.sh not found." >&2; \
+		printf '%s\n' "Copy scripts/environment.sh.example and edit it." >&2; \
+		exit 1; \
+	fi
+	@. ./scripts/environment.sh && \
+	scripts/get-cluster-logs.sh
+
+cluster-startup-logs:
+	@if [ ! -f scripts/environment.sh ]; then \
+		printf '%s\n' "Error: scripts/environment.sh not found." >&2; \
+		printf '%s\n' "Copy scripts/environment.sh.example and edit it." >&2; \
+		exit 1; \
+	fi
+	@. ./scripts/environment.sh && \
+	scripts/get-cluster-startup-logs.sh
 
 replace-node:
 	@if [ ! -f scripts/environment.sh ]; then \
