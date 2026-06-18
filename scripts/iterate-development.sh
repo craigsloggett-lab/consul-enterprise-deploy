@@ -85,16 +85,23 @@ wait_for_asg_to_be_empty() {
 delete_coordination_ssm_parameters() {
   log "Deleting coordination SSM parameters."
 
-  names="$(aws ssm describe-parameters \
-    --parameter-filters "Key=Name,Option=BeginsWith,Values=/lab/consul/" \
-    --query 'Parameters[].Name' --output text)"
+  # Derive names from Terraform outputs rather than a hard-coded prefix, which
+  # silently matched nothing after the module renamed the parameter paths.
+  names="$(
+    printf '%s\n' "${terraform_output}" |
+      jq -r '
+        .bootstrap_consul_cluster_state_ssm_parameter_name.value // empty,
+        .bootstrap_instance_id_ssm_parameter_name.value // empty,
+        .bootstrap_consul_pki_ca_chain_ssm_parameter_name.value // empty
+      '
+  )"
 
   if [ -z "${names}" ]; then
     log "  Nothing to delete."
     return 0
   fi
 
-  log "  Deleting:" "$(printf '%s' "${names}" | tr '\t' ' ')"
+  log "  Deleting:" "$(printf '%s' "${names}" | tr '\n' ' ')"
   # shellcheck disable=SC2086
   aws ssm delete-parameters --names ${names} >/dev/null
 }
