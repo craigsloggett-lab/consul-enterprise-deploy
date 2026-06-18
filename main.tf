@@ -43,7 +43,7 @@ data "aws_ssm_parameter" "vault_ca_chain" {
 
 module "consul" {
   # tflint-ignore: terraform_module_pinned_source
-  source = "git::https://github.com/craigsloggett/terraform-aws-consul-enterprise?ref=c921de2d8d5fd782725b432ea15a8650cc4e58f5"
+  source = "git::https://github.com/craigsloggett/terraform-aws-consul-enterprise?ref=145a7b63d98cd6c177a54de80237234d1408ba6c"
 
   consul_enterprise_license = var.consul_enterprise_license
   consul_fqdn               = "consul.${var.route53_zone_name}"
