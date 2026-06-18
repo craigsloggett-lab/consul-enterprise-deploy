@@ -54,4 +54,4 @@ jobs:
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
 
       - name: Lint Terraform Module Documentation
-        uses: craigsloggett/lint-terraform-docs@ba4763802eca6237bac648ec92c0444e10df689c # v1.0.17
+        uses: craigsloggett/lint-terraform-docs@4f6ee05f7f2d52ded43f7eba51554f57beef6bff # v1.0.24
