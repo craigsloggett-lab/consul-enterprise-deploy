@@ -86,6 +86,7 @@ module "consul" {
   # hold the data and audit volumes at the gp3 floor.
   compute = {
     instance_type = var.consul_server_instance_type
+    node_count    = 3
 
     raft_data_disk = {
       iops       = 3000
