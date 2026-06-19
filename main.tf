@@ -125,4 +125,10 @@ module "consul" {
     api_allowed_cidrs   = var.consul_api_allowed_cidrs
     deletion_protection = false
   }
+
+  consul_snapshot = {
+    aws_s3_bucket = {
+      force_destroy = true
+    }
+  }
 }
